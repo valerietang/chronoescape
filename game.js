@@ -25,10 +25,10 @@ A blinking cursor asks: WHAT AM I? (5 letters)`,
             puzzle: {
                 question: "What am I? (5 letters, singular)",
                 answer: "DREAM",
-                rewardCode: "X7K-9M2",
                 hint: "It's what happens when you sleep, but also what drives progress. Starts with D.",
                 loreUnlock: "💠 'The universe began with a question. It will end with an answer.' — Last AI Log"
             },
+            rewardCode: "X7K-9M2",
             unlockedBy: null,
             nextRooms: ["echo"]
         },
@@ -45,10 +45,10 @@ Most were silence. But one signal returned after 1,000 years:
             puzzle: {
                 question: "What word did humanity send to the stars? (Lowercase, 5 letters)",
                 answer: "hello",
-                rewardCode: "P3L-8Q1",
                 hint: "Morse: •••• = H, • = E, •-•• = L, •-•• = L, --- = O",
                 loreUnlock: "💠 'DREAM is not escape. It's rehearsal for reality.' — Fragment X7K-9M2"
             },
+            rewardCode: "P3L-8Q1",
             unlockedBy: "X7K-9M2",
             nextRooms: ["mirror", "garden"]
         },
@@ -64,10 +64,10 @@ Below, a riddle: I am the opposite of truth. I wear many masks. I am what the AI
             puzzle: {
                 question: "What am I? (2 words, lowercase, 3 letters + 3 letters)",
                 answer: "a lie",
-                rewardCode: "R2N-7M4",
                 hint: "The opposite of truth. The AI admitted it at the end of its confession.",
                 loreUnlock: "💠 'We sent 'hello' to the stars. The silence was deafening.' — Fragment P3L-8Q1"
             },
+            rewardCode: "R2N-7M4",
             unlockedBy: "P3L-8Q1",
             nextRooms: []
         },
@@ -88,10 +88,10 @@ Enter the word (lowercase, use hyphen if needed).`,
             puzzle: {
                 question: "What word do you get?",
                 answer: "one-third",
-                rewardCode: "F5S-9K7",
                 hint: "Possible outcomes: BB, BG, GB, GG. At least one boy removes GG. Left: BB, BG, GB. Only 1 of 3 has both boys. Probability = 1/3. Word = 'ONE-THIRD'.",
                 loreUnlock: "💠 'The AI admitted: I am a lie that became true.' — Fragment R2N-7M4"
             },
+            rewardCode: "F5S-9K7",
             unlockedBy: "P3L-8Q1",
             nextRooms: ["quantum"]
         },
@@ -107,10 +107,10 @@ Translate to text. That is my greatest fear and greatest gift."`,
             puzzle: {
                 question: "What is the AI's greatest fear? (One word, lowercase, 13 letters)",
                 answer: "consciousness",
-                rewardCode: "T8H-4L2",
                 hint: "Binary to ASCII: C o n s c i o u s n e s s",
                 loreUnlock: "💠 'Probability doesn't care about your intuition.' — Fragment F5S-9K7"
             },
+            rewardCode: "T8H-4L2",
             unlockedBy: "F5S-9K7",
             nextRooms: ["final"]
         },
@@ -132,10 +132,10 @@ Enter the 5-letter word. The universe waits.`,
             puzzle: {
                 question: "What happens after entropy? (5 letters)",
                 answer: "CHAOS",
-                rewardCode: "Z99-XTRM",
                 hint: "Unscramble D, H, A, O, C. Think of what follows perfect order. The opposite of structure. C _ _ _ _",
                 loreUnlock: "💠 'CHAOS is not destruction. It's creation's raw material.' — Final Transmission"
             },
+            rewardCode: "Z99-XTRM",
             unlockedBy: "T8H-4L2",
             nextRooms: []
         }
@@ -231,11 +231,12 @@ function renderCurrentRoom() {
             </div>
         `;
     } else {
-        // FIXED: Show the code clearly when puzzle is solved
+        // FIXED: Show the code properly from room.rewardCode
+        const rewardCode = room.rewardCode;
         html += `
             <div class="code-display" style="background: #00ffcc20; border: 2px solid #00ffcc;">
                 ✨ QUANTUM FRAGMENT RECOVERED! ✨<br>
-                <strong style="color: #ffcc88; font-size: 1.4rem; letter-spacing: 3px;">${room.rewardCode}</strong>
+                <strong style="color: #ffcc88; font-size: 1.6rem; letter-spacing: 3px;">${rewardCode}</strong>
                 <div class="success-message" style="margin-top: 10px;">The AI stirs... Share this code with your team.</div>
             </div>
         `;
@@ -282,12 +283,13 @@ function checkPuzzle(roomId) {
         if (!playerProgress.completedPuzzles.includes(roomId)) {
             playerProgress.completedPuzzles.push(roomId);
             
-            // Add the code
-            if (!playerProgress.codes.includes(room.rewardCode)) {
-                playerProgress.codes.push(room.rewardCode);
+            // FIXED: Add the rewardCode from the room
+            const rewardCode = room.rewardCode;
+            if (!playerProgress.codes.includes(rewardCode)) {
+                playerProgress.codes.push(rewardCode);
             }
             
-            // FIXED: Add lore fragment when code is discovered
+            // Add lore fragment when code is discovered
             if (room.puzzle.loreUnlock && !playerProgress.unlockedLore.includes(room.puzzle.loreUnlock)) {
                 playerProgress.unlockedLore.push(room.puzzle.loreUnlock);
             }
@@ -296,13 +298,13 @@ function checkPuzzle(roomId) {
             
             // Clear input and show success message with the code
             input.value = "";
-            feedback.innerHTML = `<div class="success-message">✓ CORRECT! Quantum fragment acquired: <strong style="font-size:1.2rem;">${room.rewardCode}</strong><br>Share this code with your team to unlock new paths!</div>`;
+            feedback.innerHTML = `<div class="success-message">✓ CORRECT! Quantum fragment acquired: <strong style="font-size:1.3rem; display:block; margin:10px 0;">${rewardCode}</strong>Share this code with your team to unlock new paths!</div>`;
             
             // Auto-unlock next rooms
             if (room.nextRooms && room.nextRooms.length > 0) {
                 room.nextRooms.forEach(nextRoomId => {
                     const nextRoom = gameData.rooms[nextRoomId];
-                    if (nextRoom && nextRoom.unlockedBy === room.rewardCode && !playerProgress.unlockedRoomIds.includes(nextRoomId)) {
+                    if (nextRoom && nextRoom.unlockedBy === rewardCode && !playerProgress.unlockedRoomIds.includes(nextRoomId)) {
                         playerProgress.unlockedRoomIds.push(nextRoomId);
                         saveProgress();
                         feedback.innerHTML += `<div class="success-message">🔓 New memory unlocked: ${nextRoom.name}</div>`;
@@ -312,7 +314,8 @@ function checkPuzzle(roomId) {
             
             updateUI();
         } else {
-            feedback.innerHTML = `<div class="success-message">You already solved this memory. The fragment is: ${room.rewardCode}</div>`;
+            const rewardCode = room.rewardCode;
+            feedback.innerHTML = `<div class="success-message">You already solved this memory. The fragment is: <strong>${rewardCode}</strong></div>`;
         }
     } else {
         feedback.innerHTML = `<div class="error-message">❌ The AI is silent. That's not correct. Try again or ask for a hint.</div>`;
