@@ -131,8 +131,8 @@ Enter the 5-letter word. The universe waits.`,
             
             puzzle: {
                 question: "What happens after entropy? (5 letters)",
-                answer: "CHAOS",
-                hint: "Unscramble D, H, A, Q, C. Think of what follows perfect order. The opposite of structure. C _ _ _ _",
+                answer: "CHASM",
+                hint: "Unscramble D, H, A, Q, C. Think of what follows perfect order. A deep gap or void. C _ _ _ _",
                 loreUnlock: "💠 'CHAOS is not destruction. It's creation's raw material.' — Final Transmission"
             },
             rewardCode: "Z99-XTRM",
@@ -156,11 +156,11 @@ let playerProgress = {
 let hintsRemaining = 3;
 
 function saveProgress() {
-    localStorage.setItem("lastQuestionSaveV4", JSON.stringify(playerProgress));
+    localStorage.setItem("lastQuestionSaveV5", JSON.stringify(playerProgress));
 }
 
 function loadProgress() {
-    const saved = localStorage.getItem("lastQuestionSaveV4");
+    const saved = localStorage.getItem("lastQuestionSaveV5");
     if (saved) {
         try {
             const data = JSON.parse(saved);
@@ -190,6 +190,80 @@ function startTimer() {
             }
         }
     }, 1000);
+}
+
+function showLorePopup(loreText, roomName) {
+    // Create a temporary popup that disappears after 5 seconds
+    const popup = document.createElement('div');
+    popup.style.cssText = `
+        position: fixed;
+        top: 20%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #0a2a2a;
+        border: 2px solid #00ffcc;
+        border-radius: 20px;
+        padding: 20px 30px;
+        color: #b8f2e2;
+        font-family: monospace;
+        font-size: 1rem;
+        z-index: 2000;
+        box-shadow: 0 0 50px rgba(0,255,204,0.5);
+        backdrop-filter: blur(10px);
+        text-align: center;
+        max-width: 80%;
+        animation: fadeInOut 5s ease-in-out forwards;
+    `;
+    popup.innerHTML = `
+        <strong style="color: #ffcc88;">📜 LORE FRAGMENT DISCOVERED: ${roomName}</strong><br><br>
+        ${loreText}
+        <br><br>
+        <small style="color: #88ffaa;">✓ Added to Archives</small>
+    `;
+    
+    // Add animation keyframes if not already added
+    if (!document.querySelector('#popupStyle')) {
+        const style = document.createElement('style');
+        style.id = 'popupStyle';
+        style.textContent = `
+            @keyframes fadeInOut {
+                0% { opacity: 0; transform: translate(-50%, -60%); }
+                15% { opacity: 1; transform: translate(-50%, -50%); }
+                85% { opacity: 1; transform: translate(-50%, -50%); }
+                100% { opacity: 0; transform: translate(-50%, -40%); visibility: hidden; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    document.body.appendChild(popup);
+    setTimeout(() => popup.remove(), 5000);
+}
+
+function showNextRoomChoice(availableRooms) {
+    if (!availableRooms || availableRooms.length === 0) return;
+    
+    const choiceHtml = `
+        <div style="position: fixed; bottom: 20px; right: 20px; background: #0a2a2a; border: 2px solid #ffcc88; border-radius: 15px; padding: 15px; z-index: 1000; max-width: 300px; box-shadow: 0 0 20px rgba(0,0,0,0.5);">
+            <strong style="color: #ffcc88;">🔓 NEW ROOMS UNLOCKED!</strong><br><br>
+            Where would you like to go?
+            <div style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
+                ${availableRooms.map(roomId => {
+                    const room = gameData.rooms[roomId];
+                    return `<button onclick="changeRoom('${roomId}'); this.parentElement.parentElement.remove();" style="background: #00ffcc20; border: 1px solid #00ffcc; padding: 8px 15px; border-radius: 10px; cursor: pointer; color: white;">➡️ ${room.name}</button>`;
+                }).join('')}
+                <button onclick="this.parentElement.parentElement.remove();" style="background: #ff444420; border: 1px solid #ff8888; padding: 8px 15px; border-radius: 10px; cursor: pointer;">⏸️ Stay Here</button>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', choiceHtml);
+    
+    // Auto-remove after 30 seconds if player ignores
+    setTimeout(() => {
+        const popup = document.querySelector('div[style*="position: fixed; bottom: 20px; right: 20px;"]');
+        if (popup) popup.remove();
+    }, 30000);
 }
 
 function updateUI() {
@@ -284,8 +358,10 @@ function checkPuzzle(roomId) {
                 playerProgress.codes.push(rewardCode);
             }
             
+            // NEW: Show lore popup when code is unlocked
             if (room.puzzle.loreUnlock && !playerProgress.unlockedLore.includes(room.puzzle.loreUnlock)) {
                 playerProgress.unlockedLore.push(room.puzzle.loreUnlock);
+                showLorePopup(room.puzzle.loreUnlock, room.name);
             }
             
             saveProgress();
@@ -293,11 +369,15 @@ function checkPuzzle(roomId) {
             input.value = "";
             feedback.innerHTML = `<div class="success-message">✓ CORRECT! Quantum fragment acquired: <strong style="font-size:1.3rem; display:block; margin:10px 0;">${rewardCode}</strong>Share this code with your team to unlock new paths!</div>`;
             
+            // Track newly unlocked rooms for the choice prompt
+            let newlyUnlocked = [];
+            
             if (room.nextRooms && room.nextRooms.length > 0) {
                 room.nextRooms.forEach(nextRoomId => {
                     const nextRoom = gameData.rooms[nextRoomId];
                     if (nextRoom && nextRoom.unlockedBy === rewardCode && !playerProgress.unlockedRoomIds.includes(nextRoomId)) {
                         playerProgress.unlockedRoomIds.push(nextRoomId);
+                        newlyUnlocked.push(nextRoomId);
                         saveProgress();
                         feedback.innerHTML += `<div class="success-message">🔓 New memory unlocked: ${nextRoom.name}</div>`;
                     }
@@ -305,6 +385,13 @@ function checkPuzzle(roomId) {
             }
             
             updateUI();
+            
+            // NEW: Show next room choice prompt if rooms were unlocked
+            if (newlyUnlocked.length > 0) {
+                setTimeout(() => {
+                    showNextRoomChoice(newlyUnlocked);
+                }, 500);
+            }
         } else {
             const rewardCode = room.rewardCode;
             feedback.innerHTML = `<div class="success-message">You already solved this memory. The fragment is: <strong>${rewardCode}</strong></div>`;
@@ -319,17 +406,16 @@ function unlockRoom() {
     const enteredCode = codeInput.value.trim().toUpperCase();
     const feedback = document.getElementById("unlockFeedback");
     
-    console.log("Attempting to unlock with code:", enteredCode);
-    
     let roomUnlocked = false;
     let unlockedRoomName = "";
+    let newlyUnlocked = [];
     
     for (const [roomId, room] of Object.entries(gameData.rooms)) {
-        console.log("Checking room:", roomId, "requires code:", room.unlockedBy);
         if (room.unlockedBy === enteredCode && !playerProgress.unlockedRoomIds.includes(roomId)) {
             playerProgress.unlockedRoomIds.push(roomId);
             roomUnlocked = true;
             unlockedRoomName = room.name;
+            newlyUnlocked.push(roomId);
             
             if (!playerProgress.codes.includes(enteredCode)) {
                 playerProgress.codes.push(enteredCode);
@@ -343,6 +429,13 @@ function unlockRoom() {
         feedback.innerHTML = `<div class="success-message">🎉 QUANTUM FRAGMENTS MERGED! New memory accessible: ${unlockedRoomName}</div>`;
         codeInput.value = "";
         updateUI();
+        
+        // NEW: Show next room choice prompt when unlocking via code
+        if (newlyUnlocked.length > 0) {
+            setTimeout(() => {
+                showNextRoomChoice(newlyUnlocked);
+            }, 500);
+        }
     } else {
         feedback.innerHTML = `<div class="error-message">❌ Invalid fragment code. Share real codes with your team. They look like <strong>X7K-9M2</strong> or <strong>P3L-8Q1</strong> - not sequential or guessable.</div>`;
     }
@@ -392,7 +485,7 @@ function showLore() {
 
 function resetGame() {
     if (confirm("⚠️ Reset the timeline? All quantum fragments will be lost. Other players won't be affected.")) {
-        localStorage.removeItem("lastQuestionSaveV4");
+        localStorage.removeItem("lastQuestionSaveV5");
         location.reload();
     }
 }
