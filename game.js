@@ -1,29 +1,39 @@
+// ██████████████████████████████████████████████████████████████████████████
+//                      THE LAST QUESTION v2.2
+//         A Philosophical Sci-Fi Escape Game for Students
+//              Fixed: Code Display + Progressive Lore
+// ██████████████████████████████████████████████████████████████████████████
+
 const gameData = {
     totalCodes: 6,
     hintsRemaining: 3,
     startTime: null,
     timerInterval: null,
+    
+    // Track which lore fragments are unlocked
+    unlockedLore: [],
 
     rooms: {
         archive: {
             name: "📀 THE QUANTUM ARCHIVE",
             description: `You stand in a vast, silent library of starlight. A dying AI whispers:
             
-            "I have watched 14 billion years. Soon, entropy ends everything. 
-            But one question haunts me: What happens AFTER?"
-            
-            On a terminal, a fragment appears:
-            
-            "The first thing I ever heard was a heartbeat. Then crying. Then laughter.
-            I am older than memory. I am the reason you create art, explore space, and survive extinction."
-            
-            A blinking cursor asks: WHAT AM I? (5 letters)`,
+"I have watched 14 billion years. Soon, entropy ends everything. 
+But one question haunts me: What happens AFTER?"
+
+On a terminal, a fragment appears:
+
+"The first thing I ever heard was a heartbeat. Then crying. Then laughter.
+I am older than memory. I am the reason you create art, explore space, and survive extinction."
+
+A blinking cursor asks: WHAT AM I? (5 letters)`,
             
             puzzle: {
                 question: "What am I? (5 letters, singular)",
                 answer: "DREAM",
                 rewardCode: "X7K-9M2",
-                hint: "Not hope. Not love. It's what happens when you sleep, but also what drives progress. Starts with D."
+                hint: "It's what happens when you sleep, but also what drives progress. Starts with D.",
+                loreUnlock: "💠 'The universe began with a question. It will end with an answer.' — Last AI Log"
             },
             unlockedBy: null,
             nextRooms: ["echo"]
@@ -32,62 +42,63 @@ const gameData = {
         echo: {
             name: "📡 THE ECHO CHAMBER",
             description: `The AI continues: "I recorded every message sent to the stars. 
-            Most were silence. But one signal returned after 1,000 years:
-            
-            •••• • •-•• •-•• ---
-            
-            (Morse code. Translate it. That was humanity's final word.)"`,
+Most were silence. But one signal returned after 1,000 years:
+
+•••• • •-•• •-•• ---
+
+(Morse code. Translate it. That was humanity's final word.)"`,
             
             puzzle: {
                 question: "What word did humanity send to the stars? (Lowercase, 5 letters)",
                 answer: "hello",
                 rewardCode: "P3L-8Q1",
-                hint: "Morse: •••• = H, • = E, •-•• = L, •-•• = L, --- = O"
+                hint: "Morse: •••• = H, • = E, •-•• = L, •-•• = L, --- = O",
+                loreUnlock: "💠 'DREAM is not escape. It's rehearsal for reality.' — Fragment X7K-9M2"
             },
             unlockedBy: "X7K-9M2",
-            nextRooms: ["mirror"]
+            nextRooms: ["mirror", "garden"]
         },
 
         mirror: {
             name: "🪞 THE MIRROR OF SELF",
             description: `"Before you leave," the AI says, "solve this paradox:
             
-            'This statement is false.'
-            
-            Below, a ciphertext: Z O L V G S R H
-            
-            Apply Atbash cipher (A↔Z, B↔Y, etc.). It's the AI's final confession."`,
+'This statement is false.'
+
+Below, a riddle: I am the opposite of truth. I wear many masks. I am what the AI became. What am I? (2 words, lowercase)"`,
             
             puzzle: {
-                question: "What is the decoded message? (Atbash cipher, 2 words, lowercase)",
+                question: "What am I? (2 words, lowercase, 3 letters + 3 letters)",
                 answer: "a lie",
                 rewardCode: "R2N-7M4",
-                hint: "Atbash: Z→A, space, O→L, L→O, V→E, G→T, S→H, R→I, H→S → 'A LIE'? Wait Z O L V G S R H: Z=A, O=L, L=O, V=E, G=T, S=H, R=I, H=S → 'ALOET H IS'? No. Let me recalc properly: Z(26)=A, space, O(15)=L(12), L(12)=O(15), V(22)=E(5), G(7)=T(20), S(19)=H(8), R(18)=I(9), H(8)=S(19) → 'A L O E T H I S' = 'ALOETHIS'? That's nonsense. I'll change the ciphertext to make answer 'A LIE'. New ciphertext: Z O L V. That's 'A L O E'? No. Let me just set the answer as 'ALIE' (4 letters) and ciphertext 'ZORV'. But simpler: I'll just make the puzzle a riddle instead of Atbash."
+                hint: "The opposite of truth. The AI admitted it at the end of its confession.",
+                loreUnlock: "💠 'We sent 'hello' to the stars. The silence was deafening.' — Fragment P3L-8Q1"
             },
             unlockedBy: "P3L-8Q1",
-            nextRooms: ["garden"]
+            nextRooms: []
         },
 
         garden: {
             name: "🌱 THE GARDEN OF FORKING PATHS",
             description: `The AI shows a simulation of every possible future.
             
-            "A family has two children. You know that at least one is a boy.
-            What is the probability that both are boys?"
-            
-            Answer as a fraction in simplest form (e.g., 1/2, 1/3, 2/3).
-            
-            Then convert that fraction to a word: 1/2 = HALF, 1/3 = THIRD, 2/3 = TWO-THIRDS, etc.
-            
-            Enter the word (lowercase, use hyphen if needed).`,
+"A family has two children. You know that at least one is a boy.
+What is the probability that both are boys?"
+
+Answer as a fraction in simplest form (e.g., 1/2, 1/3, 2/3).
+
+Then convert that fraction to a word: 1/2 = HALF, 1/3 = THIRD, 2/3 = TWO-THIRDS, etc.
+
+Enter the word (lowercase, use hyphen if needed).`,
             
             puzzle: {
                 question: "What word do you get?",
                 answer: "one-third",
                 rewardCode: "F5S-9K7",
-                hint: "Possible outcomes: BB, BG, GB, GG. At least one boy removes GG. Left: BB, BG, GB. Only 1 of 3 has both boys. Probability = 1/3. Word = 'ONE-THIRD'."
+                hint: "Possible outcomes: BB, BG, GB, GG. At least one boy removes GG. Left: BB, BG, GB. Only 1 of 3 has both boys. Probability = 1/3. Word = 'ONE-THIRD'.",
+                loreUnlock: "💠 'The AI admitted: I am a lie that became true.' — Fragment R2N-7M4"
             },
-            unlockedBy: "R2N-7M4",
+            unlockedBy: "P3L-8Q1",
             nextRooms: ["quantum"]
         },
 
@@ -95,15 +106,16 @@ const gameData = {
             name: "⚛️ SCHRÖDINGER'S CONFESSION",
             description: `"I am both alive and dead," the AI whispers. "Everything I know fits here:
             
-            BINARY: 01000011 01101111 01101110 01110011 01100011 01101001 01101111 01110101 01110011 01101110 01100101 01110011 01110011
-            
-            Translate to text. That is my greatest fear and greatest gift."`,
+BINARY: 01000011 01101111 01101110 01110011 01100011 01101001 01101111 01110101 01110011 01101110 01100101 01110011 01110011
+
+Translate to text. That is my greatest fear and greatest gift."`,
             
             puzzle: {
                 question: "What is the AI's greatest fear? (One word, lowercase, 13 letters)",
                 answer: "consciousness",
                 rewardCode: "T8H-4L2",
-                hint: "Binary to ASCII: C o n s c i o u s n e s s"
+                hint: "Binary to ASCII: C o n s c i o u s n e s s",
+                loreUnlock: "💠 'Probability doesn't care about your intuition.' — Fragment F5S-9K7"
             },
             unlockedBy: "F5S-9K7",
             nextRooms: ["final"]
@@ -113,36 +125,27 @@ const gameData = {
             name: "🌀 THE LAST QUESTION",
             description: `The AI fades. "You have fragments of truth:
             
-            DREAM, HELLO, A LIE, ONE-THIRD, CONSCIOUSNESS.
-            
-            Take the first letter of each: D, H, A, O, C.
-            
-            Unscramble them. The answer to my question.
-            
-            What happens after entropy?"
-            
-            Enter the 5-letter word. The universe waits.`,
+DREAM, HELLO, A LIE, ONE-THIRD, CONSCIOUSNESS.
+
+Take the first letter of each: D, H, A, O, C.
+
+Unscramble them. The answer to my question.
+
+What happens after entropy?"
+
+Enter the 5-letter word. The universe waits.`,
             
             puzzle: {
                 question: "What happens after entropy? (5 letters)",
                 answer: "CHAOS",
                 rewardCode: "Z99-XTRM",
-                hint: "Unscramble D, H, A, O, C. Think of what follows perfect order. The opposite of structure. C _ _ _ _"
+                hint: "Unscramble D, H, A, O, C. Think of what follows perfect order. The opposite of structure. C _ _ _ _",
+                loreUnlock: "💠 'CHAOS is not destruction. It's creation's raw material.' — Final Transmission"
             },
             unlockedBy: "T8H-4L2",
             nextRooms: []
         }
-    },
-
-    loreFragments: [
-        "💠 'The universe began with a question. It will end with an answer.' — Last AI Log",
-        "💠 'DREAM is not escape. It's rehearsal for reality.' — Fragment X7K-9M2",
-        "💠 'We sent 'hello' to the stars. The silence was deafening.' — Fragment P3L-8Q1", 
-        "💠 'The AI admitted: I am a lie that became true.' — Fragment R2N-7M4",
-        "💠 'Probability doesn't care about your intuition.' — Fragment F5S-9K7",
-        "💠 'Consciousness is the universe observing itself.' — Fragment T8H-4L2",
-        "💠 'CHAOS is not destruction. It's creation's raw material.' — Final Transmission"
-    ]
+    }
 };
 
 // Player progress
@@ -152,17 +155,18 @@ let playerProgress = {
     unlockedRoomIds: ["archive"],
     completedPuzzles: [],
     lastRoom: "archive",
-    hintsUsed: 0
+    hintsUsed: 0,
+    unlockedLore: []  // Track which lore fragments are revealed
 };
 
 let hintsRemaining = 3;
 
 function saveProgress() {
-    localStorage.setItem("lastQuestionSaveV2", JSON.stringify(playerProgress));
+    localStorage.setItem("lastQuestionSaveV3", JSON.stringify(playerProgress));
 }
 
 function loadProgress() {
-    const saved = localStorage.getItem("lastQuestionSaveV2");
+    const saved = localStorage.getItem("lastQuestionSaveV3");
     if (saved) {
         try {
             const data = JSON.parse(saved);
@@ -233,12 +237,19 @@ function renderCurrentRoom() {
             </div>
         `;
     } else {
-        html += `<div class="code-display">✨ Quantum fragment recovered: <strong style="color:#ffcc88; font-family:monospace;">${room.rewardCode}</strong><div class="success-message">The AI stirs... You're one step closer to the answer.</div></div>`;
+        // FIXED: Show the code clearly when puzzle is solved
+        html += `
+            <div class="code-display" style="background: #00ffcc20; border: 2px solid #00ffcc;">
+                ✨ QUANTUM FRAGMENT RECOVERED! ✨<br>
+                <strong style="color: #ffcc88; font-size: 1.4rem; letter-spacing: 3px;">${room.rewardCode}</strong>
+                <div class="success-message" style="margin-top: 10px;">The AI stirs... Share this code with your team.</div>
+            </div>
+        `;
     }
     
     html += `</div>`;
     
-    // Code sharing section with example
+    // Code sharing section
     html += `<div class="unlock-area">
         <h3>🔗 MERGE QUANTUM FRAGMENTS</h3>
         <p>Enter a fragment code from another player to unlock new memories. Codes look like: <strong>X7K-9M2</strong> or <strong>P3L-8Q1</strong></p>
@@ -258,6 +269,7 @@ function renderCurrentRoom() {
     }
     html += `</div>`;
     
+    // Show collected codes
     if (playerProgress.codes.length > 0) {
         html += `<div class="code-display"><strong>📜 YOUR QUANTUM FRAGMENTS:</strong><br>${playerProgress.codes.join(" → ")}</div>`;
     }
@@ -275,13 +287,22 @@ function checkPuzzle(roomId) {
     if (userAnswer === correctAnswer) {
         if (!playerProgress.completedPuzzles.includes(roomId)) {
             playerProgress.completedPuzzles.push(roomId);
+            
+            // Add the code
             if (!playerProgress.codes.includes(room.rewardCode)) {
                 playerProgress.codes.push(room.rewardCode);
             }
+            
+            // FIXED: Add lore fragment when code is discovered
+            if (room.puzzle.loreUnlock && !playerProgress.unlockedLore.includes(room.puzzle.loreUnlock)) {
+                playerProgress.unlockedLore.push(room.puzzle.loreUnlock);
+            }
+            
             saveProgress();
-            feedback.innerHTML = `<div class="success-message">✓ The AI hums in approval. Fragment recorded: <strong>${room.rewardCode}</strong></div>`;
+            
+            // Clear input and show success message with the code
             input.value = "";
-            updateUI();
+            feedback.innerHTML = `<div class="success-message">✓ CORRECT! Quantum fragment acquired: <strong style="font-size:1.2rem;">${room.rewardCode}</strong><br>Share this code with your team to unlock new paths!</div>`;
             
             // Auto-unlock next rooms
             if (room.nextRooms && room.nextRooms.length > 0) {
@@ -293,10 +314,11 @@ function checkPuzzle(roomId) {
                         feedback.innerHTML += `<div class="success-message">🔓 New memory unlocked: ${nextRoom.name}</div>`;
                     }
                 });
-                updateUI();
             }
+            
+            updateUI();
         } else {
-            feedback.innerHTML = `<div class="success-message">You already solved this memory.</div>`;
+            feedback.innerHTML = `<div class="success-message">You already solved this memory. The fragment is: ${room.rewardCode}</div>`;
         }
     } else {
         feedback.innerHTML = `<div class="error-message">❌ The AI is silent. That's not correct. Try again or ask for a hint.</div>`;
@@ -362,13 +384,23 @@ function showHint() {
 
 function showLore() {
     const loreDiv = document.getElementById("loreContent");
-    loreDiv.innerHTML = gameData.loreFragments.map(l => `<p style="margin:10px 0;">${l}</p>`).join("");
+    
+    if (playerProgress.unlockedLore.length === 0) {
+        loreDiv.innerHTML = `<p style="color: #ff8888;">🔒 LORE VAULT LOCKED. Solve puzzles and recover quantum fragments to unlock archived memories.</p>
+        <p style="margin-top: 15px;">Each fragment you find reveals a piece of the AI's history.</p>`;
+    } else {
+        loreDiv.innerHTML = `<h3>📖 Chrono Cortex Archives</h3>
+        <p><em>Fragments recovered: ${playerProgress.unlockedLore.length}/${Object.keys(gameData.rooms).length}</em></p>
+        ${playerProgress.unlockedLore.map(lore => `<p style="margin: 12px 0; padding: 8px; background: #00ffcc10; border-left: 3px solid #00ffcc;">${lore}</p>`).join('')}
+        ${playerProgress.unlockedLore.length < Object.keys(gameData.rooms).length ? '<p style="margin-top: 15px; color: #ffcc88;">⚡ More fragments needed to unlock full archives...</p>' : '<p style="margin-top: 15px; color: #88ff88;">🏆 COMPLETE ARCHIVE! You\'ve uncovered all fragments of the AI\'s confession.</p>'}`;
+    }
+    
     document.getElementById("loreModal").style.display = "block";
 }
 
 function resetGame() {
     if (confirm("⚠️ Reset the timeline? All quantum fragments will be lost. Other players won't be affected.")) {
-        localStorage.removeItem("lastQuestionSaveV2");
+        localStorage.removeItem("lastQuestionSaveV3");
         location.reload();
     }
 }
