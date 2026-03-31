@@ -1,8 +1,3 @@
-// ██████████████████████████████████████████████████████████████████████████
-//                           THE CHRONO CORTEX v2.0
-//                    Advanced Puzzle Escape Game for Students
-// ██████████████████████████████████████████████████████████████████████████
-
 const gameData = {
     totalCodes: 7,
     hintsRemaining: 3,
