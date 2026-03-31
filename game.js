@@ -4,7 +4,6 @@ const gameData = {
     startTime: null,
     timerInterval: null,
     
-    // Track which lore fragments are unlocked
     unlockedLore: [],
 
     rooms: {
@@ -73,22 +72,23 @@ Below, a riddle: I am the opposite of truth. I wear many masks. I am what the AI
         },
 
         garden: {
-            name: "🌱 THE GARDEN OF FORKING PATHS",
-            description: `The AI shows a simulation of every possible future.
+            name: "🧬 THE MUTATION LAB",
+            description: `The AI shows a genetic simulation:
             
-"A family has two children. You know that at least one is a boy.
-What is the probability that both are boys?"
+"A rare genetic disorder requires two recessive alleles (aa) to manifest. 
+The father is Aa (carrier). The mother is Aa (carrier). 
 
-Answer as a fraction in simplest form (e.g., 1/2, 1/3, 2/3).
+What is the probability their child has the disorder? 
+Answer as a fraction in simplest form (e.g., 1/2, 1/3, 1/4).
 
-Then convert that fraction to a word: 1/2 = HALF, 1/3 = THIRD, 2/3 = TWO-THIRDS, etc.
+Then convert that fraction to a word: 1/2 = HALF, 1/3 = THIRD, 1/4 = QUARTER, etc.
 
-Enter the word (lowercase, use hyphen if needed).`,
+Enter the word (lowercase)."`,
             
             puzzle: {
                 question: "What word do you get?",
-                answer: "one-third",
-                hint: "Possible outcomes: BB, BG, GB, GG. At least one boy removes GG. Left: BB, BG, GB. Only 1 of 3 has both boys. Probability = 1/3. Word = 'ONE-THIRD'.",
+                answer: "quarter",
+                hint: "Punnett square: AA (25%), Aa (50%), aa (25%). Disorder requires aa = 1/4 = QUARTER",
                 loreUnlock: "💠 'The AI admitted: I am a lie that became true.' — Fragment R2N-7M4"
             },
             rewardCode: "F5S-9K7",
@@ -119,9 +119,9 @@ Translate to text. That is my greatest fear and greatest gift."`,
             name: "🌀 THE LAST QUESTION",
             description: `The AI fades. "You have fragments of truth:
             
-DREAM, HELLO, A LIE, ONE-THIRD, CONSCIOUSNESS.
+DREAM, HELLO, A LIE, QUARTER, CONSCIOUSNESS.
 
-Take the first letter of each: D, H, A, O, C.
+Take the first letter of each: D, H, A, Q, C.
 
 Unscramble them. The answer to my question.
 
@@ -132,7 +132,7 @@ Enter the 5-letter word. The universe waits.`,
             puzzle: {
                 question: "What happens after entropy? (5 letters)",
                 answer: "CHAOS",
-                hint: "Unscramble D, H, A, O, C. Think of what follows perfect order. The opposite of structure. C _ _ _ _",
+                hint: "Unscramble D, H, A, Q, C. Think of what follows perfect order. The opposite of structure. C _ _ _ _",
                 loreUnlock: "💠 'CHAOS is not destruction. It's creation's raw material.' — Final Transmission"
             },
             rewardCode: "Z99-XTRM",
@@ -150,17 +150,17 @@ let playerProgress = {
     completedPuzzles: [],
     lastRoom: "archive",
     hintsUsed: 0,
-    unlockedLore: []  // Track which lore fragments are revealed
+    unlockedLore: []
 };
 
 let hintsRemaining = 3;
 
 function saveProgress() {
-    localStorage.setItem("lastQuestionSaveV3", JSON.stringify(playerProgress));
+    localStorage.setItem("lastQuestionSaveV4", JSON.stringify(playerProgress));
 }
 
 function loadProgress() {
-    const saved = localStorage.getItem("lastQuestionSaveV3");
+    const saved = localStorage.getItem("lastQuestionSaveV4");
     if (saved) {
         try {
             const data = JSON.parse(saved);
@@ -231,7 +231,6 @@ function renderCurrentRoom() {
             </div>
         `;
     } else {
-        // FIXED: Show the code properly from room.rewardCode
         const rewardCode = room.rewardCode;
         html += `
             <div class="code-display" style="background: #00ffcc20; border: 2px solid #00ffcc;">
@@ -244,7 +243,6 @@ function renderCurrentRoom() {
     
     html += `</div>`;
     
-    // Code sharing section
     html += `<div class="unlock-area">
         <h3>🔗 MERGE QUANTUM FRAGMENTS</h3>
         <p>Enter a fragment code from another player to unlock new memories. Codes look like: <strong>X7K-9M2</strong> or <strong>P3L-8Q1</strong></p>
@@ -255,7 +253,6 @@ function renderCurrentRoom() {
         <div id="unlockFeedback"></div>
     </div>`;
     
-    // Available rooms
     html += `<div class="room-list"><h3>📍 ACCESSIBLE MEMORIES:</h3>`;
     for (const [id, roomData] of Object.entries(gameData.rooms)) {
         const unlocked = playerProgress.unlockedRoomIds.includes(id);
@@ -264,7 +261,6 @@ function renderCurrentRoom() {
     }
     html += `</div>`;
     
-    // Show collected codes
     if (playerProgress.codes.length > 0) {
         html += `<div class="code-display"><strong>📜 YOUR QUANTUM FRAGMENTS:</strong><br>${playerProgress.codes.join(" → ")}</div>`;
     }
@@ -283,24 +279,20 @@ function checkPuzzle(roomId) {
         if (!playerProgress.completedPuzzles.includes(roomId)) {
             playerProgress.completedPuzzles.push(roomId);
             
-            // FIXED: Add the rewardCode from the room
             const rewardCode = room.rewardCode;
             if (!playerProgress.codes.includes(rewardCode)) {
                 playerProgress.codes.push(rewardCode);
             }
             
-            // Add lore fragment when code is discovered
             if (room.puzzle.loreUnlock && !playerProgress.unlockedLore.includes(room.puzzle.loreUnlock)) {
                 playerProgress.unlockedLore.push(room.puzzle.loreUnlock);
             }
             
             saveProgress();
             
-            // Clear input and show success message with the code
             input.value = "";
             feedback.innerHTML = `<div class="success-message">✓ CORRECT! Quantum fragment acquired: <strong style="font-size:1.3rem; display:block; margin:10px 0;">${rewardCode}</strong>Share this code with your team to unlock new paths!</div>`;
             
-            // Auto-unlock next rooms
             if (room.nextRooms && room.nextRooms.length > 0) {
                 room.nextRooms.forEach(nextRoomId => {
                     const nextRoom = gameData.rooms[nextRoomId];
@@ -327,10 +319,13 @@ function unlockRoom() {
     const enteredCode = codeInput.value.trim().toUpperCase();
     const feedback = document.getElementById("unlockFeedback");
     
+    console.log("Attempting to unlock with code:", enteredCode);
+    
     let roomUnlocked = false;
     let unlockedRoomName = "";
     
     for (const [roomId, room] of Object.entries(gameData.rooms)) {
+        console.log("Checking room:", roomId, "requires code:", room.unlockedBy);
         if (room.unlockedBy === enteredCode && !playerProgress.unlockedRoomIds.includes(roomId)) {
             playerProgress.unlockedRoomIds.push(roomId);
             roomUnlocked = true;
@@ -397,12 +392,11 @@ function showLore() {
 
 function resetGame() {
     if (confirm("⚠️ Reset the timeline? All quantum fragments will be lost. Other players won't be affected.")) {
-        localStorage.removeItem("lastQuestionSaveV3");
+        localStorage.removeItem("lastQuestionSaveV4");
         location.reload();
     }
 }
 
-// Event listeners
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("resetGameBtn").addEventListener("click", resetGame);
     document.getElementById("hintBtn").addEventListener("click", showHint);
