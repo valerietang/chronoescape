@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>The Chrono Cortex | Neural Escape Protocol</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <header>
+            <h1>⏰ THE CHRONO CORTEX <span style="font-size:0.8rem;">v2.0</span> 🧠</h1>
+            <div class="player-info">
+                <span>🔑 Agent: <span id="playerName">Neural_Explorer</span></span>
+                <span>📦 Artifacts: <span id="codesFound">0</span>/<span id="totalCodes">7</span></span>
+                <span>🏆 Clearance: <span id="playerRank">Ω-0</span></span>
+                <span>⏱️ Time: <span id="playTimer">00:00</span></span>
+            </div>
+            <div class="action-buttons">
+                <button id="resetGameBtn" class="reset-btn">🔄 Wipe Memory</button>
+                <button id="hintBtn" class="hint-btn">💡 Request Hint (3 left)</button>
+            </div>
+        </header>
+
+        <main>
+            <div id="gameView" class="game-view">
+                <!-- Dynamic content loads here -->
+            </div>
+        </main>
+
+        <footer>
+            <div class="footer-links">
+                <span>💠 Share neural codes with other agents</span>
+                <span>📜 <button id="showLoreBtn" class="lore-btn">View Lore Fragments</button></span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Lore Modal -->
+    <div id="loreModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>📖 Chrono Cortex Archives</h2>
+            <div id="loreContent"></div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
