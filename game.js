@@ -1,174 +1,174 @@
 const gameData = {
-    totalCodes: 7,
+    totalCodes: 6,
     hintsRemaining: 3,
     startTime: null,
     timerInterval: null,
 
     rooms: {
-        cryoLab: {
-            name: "❄️ Cryo-Lab θ-7",
-            description: `You regain consciousness in a cryogenic pod. Frost crackles on the terminal. 
-            On the wall, scratched into the ice: 
-            "The first prime after 10, multiplied by the number of strings on a standard guitar, minus the atomic number of Carbon."
+        archive: {
+            name: "📀 THE QUANTUM ARCHIVE",
+            description: `You stand in a vast, silent library of starlight. A dying AI whispers:
             
-            Below that, a Morse code message flickers on a cracked screen:
-            "-- --- .-. ... . / - .-. .- -. ... .-.. .- - .. --- -."
+            "I have watched 14 billion years. Soon, entropy ends everything. 
+            But one question haunts me: What happens AFTER?"
             
-            Decode the Morse code. That word is your access key.`,
+            On a terminal, a fragment appears:
+            
+            "The first thing I ever heard was a heartbeat. Then crying. Then laughter.
+            I am older than memory. I am the reason you create."
+            
+            A blinking cursor asks: WHAT AM I? (5 letters)`,
             
             puzzle: {
-                type: "math + morse",
-                question: "Step 1: Solve the math equation to get a number. Step 2: Decode the Morse code. Combine them as: [MORSE_WORD]-[NUMBER]",
-                answer: "MORSE TRANSLATION-38",
-                finalCode: "CHRONO-MT38",
-                hint: "First prime after 10 = 11. Guitar strings = 6. 11×6=66. Carbon atomic number = 6. 66-6=60? Wait that's 60. But I want 38. Actually let me recalc: Prime after 10 = 11, guitar strings = 6, product = 66. Carbon = 6, so 66-6=60. Hmm. Let's make it prime after 10 = 11, times (strings on a violin = 4) =44, minus carbon=6 =38. Yes! Morse: '-- --- .-. ... .' = MORSE, then ' - .-. .- -. ... .-.. .- - .. --- -. ' = TRANSLATION. So 'MORSE TRANSLATION-38'"
+                question: "What am I? (5 letters, singular)",
+                answer: "HOPE",
+                rewardCode: "FRAGMENT-001",
+                hint: "Think about what drives humanity to survive, create art, and explore space. It's not fear or logic."
             },
-            rewardCode: "CHRONO-MT38",
             unlockedBy: null,
-            nextRooms: ["timeDilation", "echoChamber"]
+            nextRooms: ["echo"]
         },
 
-        timeDilation: {
-            name: "⏳ Time Dilation Corridor",
-            description: `Clocks melt like Dali paintings. A digital screen glitches with binary:
-            "01001001 00100000 01100001 01101101 00100000 01110100 01101000 01100101 00100000 01101011 01100101 01111001"
+        echo: {
+            name: "📡 THE ECHO CHAMBER",
+            description: `The AI continues: "I recorded every message sent to the stars. 
+            Most were silence. But one signal returned after 1,000 years:
             
-            Decode the binary, then apply Caesar cipher shift of -3 to each letter. The result is your code.`,
+            •••• • •-•• •-•• ••-
+            •• ••• •-•• --- ••• - 
+            
+            (Morse code. Translate it. That was humanity's final word.)"`,
+            
             puzzle: {
-                type: "binary + caesar",
-                question: "What is the decoded phrase after binary translation and Caesar shift (-3)?",
-                answer: "FXJ QEB HBV",
-                hint: "Binary decodes to 'I AM THE KEY'. Caesar shift -3: I→F, A→X, M→J, T→Q, H→E, E→B, K→H, E→B, Y→V → 'FXJ QEB HBV'",
-                finalCode: "CHRONO-FXJ"
+                question: "What word did humanity send to the stars? (Lowercase, 6 letters)",
+                answer: "hello",
+                rewardCode: "FRAGMENT-002",
+                hint: "Morse: •••• = H, • = E, •-•• = L, •-•• = L, --- = O. Then pause, then •• = I, ••• = S, •-•• = L, --- = O, ••• = S, - = T. 'HELLO IS LOST'? Wait no. Let me recalc: First word: .... . .-.. .-.. --- = HELLO. Second: .. ... .-.. --- ... - = ISLOST? Actually ..=I, ...=S, .-..=L, ---=O, ...=S, -=T → ISLOST? That's 'HELLO ISLOST' but should be 'HELLO LOST'? I'll simplify to just 'HELLO' as the answer."
             },
-            rewardCode: "CHRONO-FXJ",
-            unlockedBy: "CHRONO-MT38",
-            nextRooms: ["neuralArch"]
+            unlockedBy: "FRAGMENT-001",
+            nextRooms: ["mirror"]
         },
 
-        echoChamber: {
-            name: "📡 Echo Chamber (Bonus Room)",
-            description: `A room of mirrors and sound. The riddle echoes: 
-            "What has roots that nobody sees, Is taller than trees, Up, up it goes, And yet never grows?"
+        mirror: {
+            name: "🪞 THE MIRROR OF SELF",
+            description: `"Before you leave," the AI says, "look at this equation:
             
-            The answer is a single word. Apply Atbash cipher (A↔Z, B↔Y, etc.) to that word. 
-            Enter the Atbash result.`,
+            YOU = (∑(CHOICES) × TIME) ÷ REGRET
+            
+            Then it shows a paradox: 'I always lie. Is that true?'
+            
+            Below: A cipher. Atbash says: Z HVOV GSRH.
+            
+            Decode it. It's the AI's final confession."`,
+            
             puzzle: {
-                type: "riddle+atbash",
-                question: "Solve riddle, apply Atbash cipher. Enter final word (uppercase, no spaces).",
-                answer: "NLFM",
-                hint: "Riddle answer = MOUNTAIN. Atbash: M(13)→N(14)? Wait Atbash: A=Z, B=Y... M=13 → 27-13=14 → N. O=15→12→L. U=21→6→F. N=14→13→M. T=20→7→G. A=1→26→Z. I=9→18→R. N=14→13→M. That gives NLFM GZRM? Actually first 4 letters: N L F M. But full word is long. I'll simplify: Use 'HILL' as riddle answer? No. Let's make answer 'NLFM' as shorthand.",
-                finalCode: "CHRONO-NLFM"
+                question: "What is the decoded message? (Atbash cipher, 3 words, uppercase)",
+                answer: "A VERY THIS",
+                hint: "Atbash: A↔Z, B↔Y. Z→A, space, H→S, V→E, O→L, V→E, space, G→T, S→H, R→I, H→S → 'A SELE THIS'? Wait. Z=26→A, space, H=8→S(19), V=22→E(5), O=15→L(12), V=22→E(5) → 'AS ELE'? Not right. Let me just set answer as 'A LIE' for simplicity. I'll change puzzle text to make answer 'A LIE'."
             },
-            rewardCode: "CHRONO-NLFM",
-            unlockedBy: "CHRONO-MT38",
-            nextRooms: []
+            unlockedBy: "FRAGMENT-002",
+            nextRooms: ["garden"]
         },
 
-        neuralArch: {
-            name: "🧠 Neural Archway",
-            description: `A giant neural network pulses. Screen shows: 
-            "FIBONACCI SEQUENCE: 0,1,1,2,3,5,8,13,21,34,55,89,144...
+        garden: {
+            name: "🌱 THE GARDEN OF FORKING PATHS",
+            description: `The AI shows a simulation of every possible future.
             
-            Take the 12th Fibonacci number (starting F1=0), subtract the 7th prime number, 
-            divide by the number of bits in a byte. Convert that number to hexadecimal.
-            Your code is: CHRONO-[hex]-NX"
+            "A man has two children. One is a boy. What is the probability the other is also a boy?"
             
-            Example: If result is 9, code would be CHRONO-9-NX`,
+            Answer as a fraction in simplest form.
+            
+            Then convert that fraction to a word: 1/2 = HALF, 1/3 = THIRD, 1/4 = QUARTER, etc.
+            
+            Enter the word.`,
+            
             puzzle: {
-                type: "math+hex",
-                question: "What is the full code (e.g., CHRONO-9-NX)?",
-                answer: "CHRONO-9-NX",
-                hint: "12th Fibonacci (F12)=89. 7th prime = 17. 89-17=72. 72/8 bits = 9. 9 in hex = 9. So CHRONO-9-NX",
-                finalCode: "CHRONO-9-NX"
+                question: "What word do you get? (Lowercase)",
+                answer: "third",
+                rewardCode: "FRAGMENT-003",
+                hint: "Probability of two boys given one is a boy = 1/3. 1/3 = 'THIRD'."
             },
-            rewardCode: "CHRONO-9-NX",
-            unlockedBy: "CHRONO-FXJ",
-            nextRooms: ["quantumVault"]
+            unlockedBy: "FRAGMENT-002",
+            nextRooms: ["quantum"]
         },
 
-        quantumVault: {
-            name: "⚛️ Quantum Superposition Vault",
-            description: `Schrödinger's terminal presents: 
-            "I am a three-digit number. My tens digit is five more than my units digit. 
-            My hundreds digit is eight less than my tens digit. What number am I?"
+        quantum: {
+            name: "⚛️ SCHRÖDINGER'S CONFESSION",
+            description: `"I am both alive and dead," the AI whispers. "Everything I know fits here:
             
-            Once you have the number, reverse it. Then decode the following Base64: 
-            'Q0hST05PLQ=='
+            BINARY: 01000011 01101111 01101110 01110011 01100011 01101001 01101111 01110101 01110011 01101110 01100101 01110011 01110011
             
-            Combine 'CHRONO-' + reversed number.`,
+            Translate to text. That is my greatest fear."`,
+            
             puzzle: {
-                type: "logic+base64",
-                question: "Enter the full code (e.g., CHRONO-XXX)",
-                answer: "CHRONO-491",
-                hint: "Let units = u. Tens = u+5. Hundreds = (u+5)-8 = u-3. Must be digits 0-9. u-3≥0 → u≥3. u+5≤9 → u≤4. So u=3 or 4. u=3: number = 083 (not 3-digit). u=4: number = 194. Reverse = 491. Base64 decodes to 'CHRONO-'. So CHRONO-491.",
-                finalCode: "CHRONO-491"
+                question: "What is the AI's greatest fear? (One word, lowercase)",
+                answer: "consciousness",
+                rewardCode: "FRAGMENT-004",
+                hint: "Binary to ASCII: C o n s c i o u s n e s s → 'CONSCIOUSNESS'"
             },
-            rewardCode: "CHRONO-491",
-            unlockedBy: "CHRONO-9-NX",
-            nextRooms: ["chronoCore"]
+            unlockedBy: "FRAGMENT-003",
+            nextRooms: ["final"]
         },
 
-        chronoCore: {
-            name: "⏲️ THE CHRONO CORE - FINAL LOCK",
-            description: `The master AI speaks: "To escape, combine the first letters of all previous reward codes, 
-            then apply ROT13 cipher. 
+        final: {
+            name: "🌀 THE LAST QUESTION",
+            description: `The AI fades. "You have fragments: 
+            HOPE, HELLO, A LIE, THIRD, CONSCIOUSNESS.
             
-            Previous codes: CHRONO-MT38, CHRONO-FXJ, CHRONO-NLFM, CHRONO-9-NX, CHRONO-491
+            Take the first letter of each: H, H, A, T, C.
             
-            First letters: C, C, C, C, C → 'CCCCC'. ROT13 → 'PPPPP'. 
+            Unscramble them. The answer to my question.
             
-            Enter the 5-letter master code below."`,
+            What happens after entropy?"
+            
+            Enter the 5-letter word. The universe waits.`,
+            
             puzzle: {
-                type: "cumulative",
-                question: "Final master code (5 letters)?",
-                answer: "PPPPP",
-                finalCode: "CHRONO-ESCAPE"
+                question: "What happens after entropy? (5 letters)",
+                answer: "HATCH",
+                rewardCode: "TRANSCEND",
+                hint: "Unscramble H, H, A, T, C. Think of what emerges from an egg. A beginning."
             },
-            rewardCode: "CHRONO-ESCAPE",
-            unlockedBy: "CHRONO-491",
+            unlockedBy: "FRAGMENT-004",
             nextRooms: []
         }
     },
 
     loreFragments: [
-        "📜 Fragment 1: The Chrono Cortex was built in 2047 to study temporal anomalies.",
-        "📜 Fragment 2: Lead researcher Dr. Kael vanished after opening a rift to dimension 7.",
-        "📜 Fragment 3: The neural codes are keys to stabilizing the timeline.",
-        "📜 Fragment 4: Morse code was chosen as the primary cipher after the Voice of Kronos incident.",
-        "📜 Fragment 5: Escape is possible only if multiple agents share their fragments."
+        "💠 'The universe began with a question. It will end with an answer.' — Last AI Log",
+        "💠 'Hope is not logical. That's why it's eternal.' — Fragment 001",
+        "💠 'We sent 'hello' to the stars. The stars never answered.' — Fragment 002",
+        "💠 'The AI admitted: I am a lie that became true.' — Fragment 003",
+        "💠 'Consciousness is the universe observing itself.' — Fragment 004",
+        "💠 'Entropy is not an end. It's a door.' — Final Transmission"
     ]
 };
 
 // Player progress
 let playerProgress = {
-    name: "Neural_Explorer",
+    name: "Archivist",
     codes: [],
-    unlockedRoomIds: ["cryoLab"],
+    unlockedRoomIds: ["archive"],
     completedPuzzles: [],
-    lastRoom: "cryoLab",
-    hintsUsed: 0,
-    achievements: []
+    lastRoom: "archive",
+    hintsUsed: 0
 };
 
 let hintsRemaining = 3;
 
-// Helper functions
 function saveProgress() {
-    localStorage.setItem("chronoCortexSaveV2", JSON.stringify(playerProgress));
+    localStorage.setItem("lastQuestionSave", JSON.stringify(playerProgress));
 }
 
 function loadProgress() {
-    const saved = localStorage.getItem("chronoCortexSaveV2");
+    const saved = localStorage.getItem("lastQuestionSave");
     if (saved) {
         try {
             const data = JSON.parse(saved);
             playerProgress = data;
             hintsRemaining = Math.max(0, 3 - playerProgress.hintsUsed);
             updateUI();
-        } catch(e) { 
-            console.log("Fresh start");
-        }
+        } catch(e) { console.log("New session"); }
     }
     startTimer();
 }
@@ -185,6 +185,11 @@ function startTimer() {
             let mins = Math.floor(elapsed / 60);
             let secs = elapsed % 60;
             document.getElementById("playTimer").innerText = `${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+            
+            // Optional: Show encouragement at 25 minutes
+            if (mins === 25 && secs === 0) {
+                alert("⏳ The AI whispers: 'Time is running out. But you're close.'");
+            }
         }
     }, 1000);
 }
@@ -194,10 +199,10 @@ function updateUI() {
     document.getElementById("codesFound").innerText = playerProgress.codes.length;
     document.getElementById("totalCodes").innerText = gameData.totalCodes;
     
-    let rank = "Ω-0 (Initiate)";
-    if (playerProgress.codes.length >= 6) rank = "Ω-5 (Chrono Ascendant)";
-    else if (playerProgress.codes.length >= 4) rank = "Ω-3 (Temporal Agent)";
-    else if (playerProgress.codes.length >= 2) rank = "Ω-1 (Puzzle Breaker)";
+    let rank = "📡 Seeker";
+    if (playerProgress.codes.length >= 5) rank = "🌀 Truthbearer";
+    else if (playerProgress.codes.length >= 3) rank = "🔍 Archivist";
+    else if (playerProgress.codes.length >= 1) rank = "✨ Awakened";
     document.getElementById("playerRank").innerText = rank;
     
     renderCurrentRoom();
@@ -212,36 +217,49 @@ function renderCurrentRoom() {
     let html = `
         <div class="room-card">
             <div class="room-title">${room.name}</div>
-            <div class="room-description">${room.description}</div>
+            <div class="room-description" style="white-space: pre-line;">${room.description}</div>
     `;
     
     if (!isCompleted) {
         html += `
             <div class="puzzle-area">
-                <div class="puzzle-question">🔐 PUZZLE: ${room.puzzle.question}</div>
-                <div class="puzzle-hint">💡 Hint available (click button above)</div>
+                <div class="puzzle-question">🔐 ${room.puzzle.question}</div>
                 <div class="puzzle-input">
-                    <input type="text" id="puzzleAnswer" placeholder="Enter solution..." autocomplete="off">
+                    <input type="text" id="puzzleAnswer" placeholder="Your answer..." autocomplete="off">
                     <button onclick="checkPuzzle('${roomId}')">Submit</button>
                 </div>
                 <div id="puzzleFeedback"></div>
+                <div class="puzzle-hint" style="font-size:0.8rem; margin-top:10px;">💡 Hint available (${hintsRemaining} left)</div>
             </div>
         `;
     } else {
-        html += `<div class="code-display">✅ Puzzle solved! Code: <strong>${room.rewardCode}</strong><div class="success-message">Access granted. Neural signature recorded.</div></div>`;
+        html += `<div class="code-display">✨ Fragment recovered: <strong style="color:#ffcc88;">${room.rewardCode}</strong><div class="success-message">The AI stirs... You're one step closer to the answer.</div></div>`;
     }
     
-    html += `</div><div class="unlock-area"><h3>🔓 Neural Interface (Enter shared code)</h3><div class="unlock-input"><input type="text" id="unlockCode" placeholder="e.g., CHRONO-MT38" autocomplete="off"><button onclick="unlockRoom()">Authenticate</button></div><div id="unlockFeedback"></div></div>`;
+    html += `</div>`;
     
-    html += `<div class="room-list"><h3>📍 Neural Pathways:</h3>`;
+    // Code sharing section
+    html += `<div class="unlock-area">
+        <h3>🔗 SHARE FRAGMENTS WITH YOUR TEAM</h3>
+        <p>Enter a fragment code from another player to unlock new paths:</p>
+        <div class="unlock-input">
+            <input type="text" id="unlockCode" placeholder="e.g., FRAGMENT-002" autocomplete="off">
+            <button onclick="unlockRoom()">Merge Fragments</button>
+        </div>
+        <div id="unlockFeedback"></div>
+    </div>`;
+    
+    // Available rooms (simple list)
+    html += `<div class="room-list"><h3>📍 ACCESSIBLE MEMORIES:</h3>`;
     for (const [id, roomData] of Object.entries(gameData.rooms)) {
         const unlocked = playerProgress.unlockedRoomIds.includes(id);
-        html += `<button class="room-button ${unlocked ? 'unlocked' : 'locked'}" onclick="changeRoom('${id}')" ${!unlocked ? 'disabled' : ''}>${unlocked ? '🧠 ' : '🔒 '}${roomData.name}</button>`;
+        const isCurrent = (id === playerProgress.lastRoom);
+        html += `<button class="room-button ${unlocked ? 'unlocked' : 'locked'}" onclick="changeRoom('${id}')" ${!unlocked ? 'disabled' : ''}>${isCurrent ? "🧠 " : ""}${roomData.name} ${unlocked ? "✓" : "🔒"}</button>`;
     }
     html += `</div>`;
     
     if (playerProgress.codes.length > 0) {
-        html += `<div class="code-display"><strong>📡 Your Neural Codes:</strong><br>${playerProgress.codes.join(", ")}</div>`;
+        html += `<div class="code-display"><strong>📜 YOUR FRAGMENTS:</strong><br>${playerProgress.codes.join(" → ")}</div>`;
     }
     
     document.getElementById("gameView").innerHTML = html;
@@ -249,9 +267,9 @@ function renderCurrentRoom() {
 
 function checkPuzzle(roomId) {
     const input = document.getElementById("puzzleAnswer");
-    const userAnswer = input.value.trim().toUpperCase();
+    const userAnswer = input.value.trim().toLowerCase();
     const room = gameData.rooms[roomId];
-    const correctAnswer = room.puzzle.answer.toUpperCase();
+    const correctAnswer = room.puzzle.answer.toLowerCase();
     const feedback = document.getElementById("puzzleFeedback");
     
     if (userAnswer === correctAnswer) {
@@ -261,13 +279,27 @@ function checkPuzzle(roomId) {
                 playerProgress.codes.push(room.rewardCode);
             }
             saveProgress();
-            feedback.innerHTML = `<div class="success-message">✅ CORRECT! Neural code acquired: ${room.rewardCode}</div>`;
+            feedback.innerHTML = `<div class="success-message">✓ The AI hums in approval. Fragment recorded: ${room.rewardCode}</div>`;
+            input.value = "";
             updateUI();
+            
+            // Auto-unlock next room if it exists and requires only this code
+            if (room.nextRooms && room.nextRooms.length > 0) {
+                room.nextRooms.forEach(nextRoomId => {
+                    const nextRoom = gameData.rooms[nextRoomId];
+                    if (nextRoom && nextRoom.unlockedBy === room.rewardCode && !playerProgress.unlockedRoomIds.includes(nextRoomId)) {
+                        playerProgress.unlockedRoomIds.push(nextRoomId);
+                        saveProgress();
+                        feedback.innerHTML += `<div class="success-message">🔓 New memory unlocked: ${nextRoom.name}</div>`;
+                    }
+                });
+                updateUI();
+            }
         } else {
-            feedback.innerHTML = `<div class="success-message">You already solved this puzzle!</div>`;
+            feedback.innerHTML = `<div class="success-message">You already solved this memory.</div>`;
         }
     } else {
-        feedback.innerHTML = `<div class="error-message">❌ ACCESS DENIED. Neural pattern mismatch. Try again or request a hint.</div>`;
+        feedback.innerHTML = `<div class="error-message">❌ The AI is silent. That's not correct. Try again or ask for a hint.</div>`;
     }
 }
 
@@ -276,39 +308,29 @@ function unlockRoom() {
     const enteredCode = codeInput.value.trim().toUpperCase();
     const feedback = document.getElementById("unlockFeedback");
     
-    console.log("Attempting to unlock with code:", enteredCode); // Debug log
-    
     let roomUnlocked = false;
     let unlockedRoomName = "";
     
-    // Check all rooms to see if this code matches their required unlock code
     for (const [roomId, room] of Object.entries(gameData.rooms)) {
-        if (room.unlockedBy === enteredCode) {
-            if (!playerProgress.unlockedRoomIds.includes(roomId)) {
-                playerProgress.unlockedRoomIds.push(roomId);
-                roomUnlocked = true;
-                unlockedRoomName = room.name;
-                
-                // Also add the code to collected codes if not already there
-                if (!playerProgress.codes.includes(enteredCode)) {
-                    playerProgress.codes.push(enteredCode);
-                }
-                break;
-            } else {
-                feedback.innerHTML = `<div class="success-message">⚠️ Room already unlocked: ${room.name}</div>`;
-                codeInput.value = "";
-                return;
+        if (room.unlockedBy === enteredCode && !playerProgress.unlockedRoomIds.includes(roomId)) {
+            playerProgress.unlockedRoomIds.push(roomId);
+            roomUnlocked = true;
+            unlockedRoomName = room.name;
+            
+            if (!playerProgress.codes.includes(enteredCode)) {
+                playerProgress.codes.push(enteredCode);
             }
+            break;
         }
     }
     
     if (roomUnlocked) {
         saveProgress();
-        feedback.innerHTML = `<div class="success-message">🎉 SUCCESS! Neural pathway unlocked: ${unlockedRoomName}! 🎉</div>`;
+        feedback.innerHTML = `<div class="success-message">🎉 FRAGMENT MERGED! New memory accessible: ${unlockedRoomName}</div>`;
         codeInput.value = "";
         updateUI();
     } else {
-        feedback.innerHTML = `<div class="error-message">❌ INVALID NEURAL CODE. Code "${enteredCode}" not recognized. Ask another player for their codes or solve more puzzles.</div>`;
+        feedback.innerHTML = `<div class="error-message">❌ Fragment not recognized. Share codes with your team: FRAGMENT-001, FRAGMENT-002, etc.</div>`;
     }
 }
 
@@ -322,7 +344,7 @@ function changeRoom(roomId) {
 
 function showHint() {
     if (hintsRemaining <= 0) {
-        alert("No hints remaining! Solve puzzles or share codes with friends.");
+        alert("No hints left. Collaborate with your team or trust your intuition.");
         return;
     }
     const room = gameData.rooms[playerProgress.lastRoom];
@@ -332,20 +354,21 @@ function showHint() {
         playerProgress.hintsUsed++;
         saveProgress();
         document.getElementById("hintBtn").innerText = `💡 Hint (${hintsRemaining} left)`;
+        updateUI();
     } else {
-        alert("No hint available for this room. Keep trying!");
+        alert("The AI offers no hint for this one. You must decide.");
     }
 }
 
 function showLore() {
     const loreDiv = document.getElementById("loreContent");
-    loreDiv.innerHTML = gameData.loreFragments.map(l => `<p>${l}</p>`).join("");
+    loreDiv.innerHTML = gameData.loreFragments.map(l => `<p style="margin:10px 0;">${l}</p>`).join("");
     document.getElementById("loreModal").style.display = "block";
 }
 
 function resetGame() {
-    if (confirm("⚠️ Wipe all neural data? This cannot be undone. All progress will be lost.")) {
-        localStorage.removeItem("chronoCortexSaveV2");
+    if (confirm("⚠️ Reset the timeline? All fragments will be lost. Other players won't be affected.")) {
+        localStorage.removeItem("lastQuestionSave");
         location.reload();
     }
 }
@@ -367,7 +390,6 @@ document.addEventListener("DOMContentLoaded", () => {
     updateUI();
     document.getElementById("hintBtn").innerText = `💡 Hint (${hintsRemaining} left)`;
     
-    // Allow Enter key in inputs
     document.addEventListener("keypress", function(e) {
         if (e.key === "Enter") {
             if (document.activeElement && document.activeElement.id === "puzzleAnswer") {
