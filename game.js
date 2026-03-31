@@ -1,9 +1,3 @@
-// ██████████████████████████████████████████████████████████████████████████
-//                      THE LAST QUESTION v2.2
-//         A Philosophical Sci-Fi Escape Game for Students
-//              Fixed: Code Display + Progressive Lore
-// ██████████████████████████████████████████████████████████████████████████
-
 const gameData = {
     totalCodes: 6,
     hintsRemaining: 3,
