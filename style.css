@@ -460,3 +460,61 @@ footer {
     border-radius: 8px;
     cursor: pointer;
 }
+
+/* Ending Cinematic Styles */
+.ending-modal .modal-content {
+    background: #000000;
+    border: 2px solid #ffcc88;
+    max-width: 700px;
+    text-align: center;
+}
+
+.ending-text {
+    font-family: 'Courier New', monospace;
+    color: #ffeedd;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    text-align: center;
+    padding: 20px;
+    min-height: 400px;
+    white-space: pre-line;
+}
+
+.ending-text .star {
+    color: #ffcc88;
+    font-size: 1.2rem;
+}
+
+.ending-text .whisper {
+    color: #88aaff;
+    font-style: italic;
+}
+
+.ending-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #ffcc8833;
+}
+
+@keyframes fadeInText {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.ending-line {
+    animation: fadeInText 1s ease-out forwards;
+    margin-bottom: 20px;
+}
+
+/* Room completion animation */
+@keyframes fragmentReveal {
+    0% { opacity: 0; transform: scale(0.8); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+.code-display {
+    animation: fragmentReveal 0.5s ease-out;
+}
