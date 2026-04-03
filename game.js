@@ -731,3 +731,11 @@ function resetGame() {
         updateUI();
     }
 }
+
+// ============================================
+// EVENT LISTENERS
+// ============================================
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("createGameBtn").addEventListener("click", createGame);
+    document.getElementById("joinGameBtn").addEventListener("click", joinGame);
+});
