@@ -518,3 +518,78 @@ footer {
 .code-display {
     animation: fragmentReveal 0.5s ease-out;
 }
+
+/* Additional styles for better UI */
+
+/* Flowchart nodes - more button-like */
+.flowchart-node {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.flowchart-node:hover {
+    transform: scale(1.1);
+    border-width: 3px;
+    box-shadow: 0 0 15px cyan;
+}
+
+.flowchart-node.unlocked {
+    cursor: pointer;
+    animation: pulse-glow 2s infinite;
+}
+
+@keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 5px #ffcc88; }
+    50% { box-shadow: 0 0 15px #ffcc88; }
+}
+
+/* Code display with labels */
+.code-entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    margin: 5px 0;
+    background: #00ffcc10;
+    border-radius: 8px;
+    border-left: 3px solid #00ffcc;
+}
+
+.code-room {
+    font-size: 0.8rem;
+    color: #ffcc88;
+}
+
+.code-value {
+    font-family: monospace;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+/* Scroll to top button (optional) */
+.scroll-top {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #00ffcc;
+    color: black;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 100;
+}
+
+.scroll-top.visible {
+    opacity: 0.7;
+}
+
+.scroll-top:hover {
+    opacity: 1;
+}
