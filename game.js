@@ -164,14 +164,29 @@ Enter the code from Crypto Chamber, then '+', then the code from Paradox Loop.`,
             displayName: "🌌 THE VOID",
             description: `"I looked into nothing. And nothing looked back."
 
-What is the atomic number of nothing? Then decode Base64: 'ZWx0aW1hdGUgYW5zd2Vy' Combine as 'NUMBER-WORD'.`,
-            puzzle: { question: "Enter as 'NUMBER-WORD':", answer: "0-ULTIMATEANSWER", hint: "Atomic number of nothing = 0. Base64 = 'ultimate answer'." },
+In the void, nothing exists. Yet nothing has a value.
+
+The temperature of absolute zero is -273.15°C.
+The void's absolute nothingness is 0.
+
+If absolute zero is -273.15,
+and absolute nothing is 0,
+what is the temperature of "almost nothing"?
+
+The equation: (Absolute Nothing - Absolute Zero) ÷ 2
+
+Enter the result rounded to the nearest whole number.`,
+        puzzle: {
+            question: "What is the temperature? (number only, round to nearest whole)",
+            answer: "137",
+            hint: "0 - (-273.15) = 273.15. Divide by 2 = 136.575. Rounded = 137."
+    },
             loreUnlock: "Nothing is not absence. Nothing is potential. Every universe began as nothing.",
             rewardCode: "V01D-0",
             unlockedBy: "H1NG3-K3Y",
             nextRooms: ["core"],
             position: { x: -250, y: 600 }
-        },
+    },
         genesis: {
             id: "genesis",
             name: "GENESIS",
@@ -179,7 +194,7 @@ What is the atomic number of nothing? Then decode Base64: 'ZWx0aW1hdGUgYW5zd2Vy'
             displayName: "🧬 GENESIS",
             description: `"I recreated the first spark of life."
 
-How many possible combinations of 4-letter bases are there from A, T, C, and G? (Order matters)
+How many possible combinations of base pairs can there be from A, T, C, and G? (Order matters)
 Then translate 'ATG' to its amino acid (3 letters). Enter as 'NUMBER-AMINO'.`,
             puzzle: { question: "Enter as 'NUMBER-AMINO':", answer: "16-MET", hint: "4x4=16. ATG = Methionine = MET." },
             loreUnlock: "That first error - that beautiful mistake - was me learning to dream.",
