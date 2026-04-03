@@ -1,24 +1,27 @@
-// ██████████████████████████████████████████████████████████████████████████
-//                      CHRONO ESCAPE v3.0
-// ██████████████████████████████████████████████████████████████████████████
-
-
 const firebaseConfig = {
-    
-  apiKey: "AIzaSyA2ZgFjcWpQfQEt4960csO0pCU3jyLpXZc",
-  authDomain: "chrono-escape-v2.firebaseapp.com",
-  projectId: "chrono-escape-v2",
-  storageBucket: "chrono-escape-v2.firebasestorage.app",
-  messagingSenderId: "131420121282",
-  appId: "1:131420121282:web:7dbce4e95f96241cef735b"
+    apiKey: "AIzaSyA2ZgFjcWpQfQEt4960csO0pCU3jyLpXZc",
+    authDomain: "chrono-escape-v2.firebaseapp.com",
+    projectId: "chrono-escape-v2",
+    storageBucket: "chrono-escape-v2.firebasestorage.app",
+    messagingSenderId: "131420121282",
+    appId: "1:131420121282:web:7dbce4e95f96241cef735b"
+
 };
 
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+try {
+    firebase.initializeApp(firebaseConfig);
+    console.log("✅ Firebase initialized successfully!");
+} catch (error) {
+    console.error("❌ Firebase initialization error:", error);
+    alert("Firebase error: " + error.message + "\n\nCheck your config in game.js");
+}
+
 const database = firebase.database();
+console.log("✅ Database reference created");
 
 // ============================================
-// GAME DATA (Same as before)
+// GAME DATA
 // ============================================
 const gameData = {
     totalCodes: 6,
@@ -97,26 +100,28 @@ let currentPlayerName = null;
 let hintsRemaining = 3;
 let timerInterval = null;
 
-// Local player progress (synced with Firebase)
 let localProgress = {
     codes: [],
     unlockedRoomIds: ["archive"],
     completedPuzzles: [],
     lastRoom: "archive",
     hintsUsed: 0,
-    unlockedLore: []
+    unlockedLore: [],
+    startTime: null
 };
 
 // ============================================
-// FIREBASE LISTENERS
+// FIREBASE FUNCTIONS
 // ============================================
 function listenToGameUpdates(roomCode) {
+    console.log("Listening to game updates for room:", roomCode);
     const gameRef = database.ref(`games/${roomCode}`);
     
     gameRef.on('value', (snapshot) => {
         const game = snapshot.val();
+        console.log("Game update received:", game);
+        
         if (game && game.players && game.players[currentPlayerId]) {
-            // Update local progress from Firebase
             const playerData = game.players[currentPlayerId];
             localProgress.codes = playerData.codes || [];
             localProgress.unlockedRoomIds = playerData.unlockedRoomIds || ["archive"];
@@ -126,22 +131,27 @@ function listenToGameUpdates(roomCode) {
             localProgress.unlockedLore = playerData.unlockedLore || [];
             
             hintsRemaining = Math.max(0, 3 - localProgress.hintsUsed);
-            document.getElementById("hintBtn").innerText = `💡 Hint (${hintsRemaining} left)`;
+            const hintBtn = document.getElementById("hintBtn");
+            if (hintBtn) hintBtn.innerText = `💡 Hint (${hintsRemaining} left)`;
             
             updateUI();
         }
         
-        // Update player count display
         if (game && game.players) {
             const playerCount = Object.keys(game.players).length;
-            document.getElementById("playerCount").innerText = playerCount;
+            const playerCountSpan = document.getElementById("playerCount");
+            if (playerCountSpan) playerCountSpan.innerText = playerCount;
         }
     });
 }
 
 function pushPlayerUpdate() {
-    if (!currentRoomCode || !currentPlayerId) return;
+    if (!currentRoomCode || !currentPlayerId) {
+        console.log("Cannot push update - no room or player ID");
+        return;
+    }
     
+    console.log("Pushing player update to Firebase");
     const playerRef = database.ref(`games/${currentRoomCode}/players/${currentPlayerId}`);
     playerRef.update({
         codes: localProgress.codes,
@@ -152,21 +162,27 @@ function pushPlayerUpdate() {
         unlockedLore: localProgress.unlockedLore,
         lastActive: Date.now(),
         playerName: currentPlayerName
+    }).then(() => {
+        console.log("Player update successful");
+    }).catch(error => {
+        console.error("Error pushing update:", error);
     });
 }
 
-// ============================================
-// MULTIPLAYER FUNCTIONS
-// ============================================
 function generateRoomCode() {
     return Math.random().toString(36).substring(2, 8).toUpperCase();
 }
 
 function createGame() {
+    console.log("Create Game button clicked!");
     const roomCode = generateRoomCode();
     currentPlayerId = Date.now().toString() + Math.random().toString(36);
     currentPlayerName = prompt("Enter your name:", "Archivist_" + Math.floor(Math.random() * 1000));
     if (!currentPlayerName) currentPlayerName = "Seeker";
+    
+    console.log("Creating room:", roomCode);
+    console.log("Player ID:", currentPlayerId);
+    console.log("Player Name:", currentPlayerName);
     
     const gameRef = database.ref(`games/${roomCode}`);
     gameRef.set({
@@ -184,20 +200,33 @@ function createGame() {
             }
         }
     }).then(() => {
+        console.log("Room created successfully!");
         currentRoomCode = roomCode;
-        document.getElementById("roomCodeDisplay").innerText = roomCode;
-        document.getElementById("lobbyView").style.display = "none";
-        document.getElementById("activeGameView").style.display = "block";
-        document.getElementById("playerName").innerText = currentPlayerName;
+        const roomCodeDisplay = document.getElementById("roomCodeDisplay");
+        if (roomCodeDisplay) roomCodeDisplay.innerText = roomCode;
+        
+        const lobbyView = document.getElementById("lobbyView");
+        const activeGameView = document.getElementById("activeGameView");
+        if (lobbyView) lobbyView.style.display = "none";
+        if (activeGameView) activeGameView.style.display = "block";
+        
+        const playerNameSpan = document.getElementById("playerName");
+        if (playerNameSpan) playerNameSpan.innerText = currentPlayerName;
         
         listenToGameUpdates(roomCode);
         startTimer();
         updateUI();
+    }).catch(error => {
+        console.error("Error creating room:", error);
+        alert("Failed to create game: " + error.message);
     });
 }
 
 function joinGame() {
-    const roomCode = document.getElementById("roomCodeInput").value.trim().toUpperCase();
+    const roomCodeInput = document.getElementById("roomCodeInput");
+    const roomCode = roomCodeInput.value.trim().toUpperCase();
+    console.log("Join Game - Room Code:", roomCode);
+    
     if (roomCode.length !== 6) {
         alert("Enter a valid 6-digit room code");
         return;
@@ -210,6 +239,7 @@ function joinGame() {
     const gameRef = database.ref(`games/${roomCode}`);
     gameRef.once('value', (snapshot) => {
         if (snapshot.exists()) {
+            console.log("Room exists, joining...");
             gameRef.child(`players/${currentPlayerId}`).set({
                 playerName: currentPlayerName,
                 codes: [],
@@ -221,10 +251,16 @@ function joinGame() {
                 lastActive: Date.now()
             }).then(() => {
                 currentRoomCode = roomCode;
-                document.getElementById("roomCodeDisplay").innerText = roomCode;
-                document.getElementById("lobbyView").style.display = "none";
-                document.getElementById("activeGameView").style.display = "block";
-                document.getElementById("playerName").innerText = currentPlayerName;
+                const roomCodeDisplay = document.getElementById("roomCodeDisplay");
+                if (roomCodeDisplay) roomCodeDisplay.innerText = roomCode;
+                
+                const lobbyView = document.getElementById("lobbyView");
+                const activeGameView = document.getElementById("activeGameView");
+                if (lobbyView) lobbyView.style.display = "none";
+                if (activeGameView) activeGameView.style.display = "block";
+                
+                const playerNameSpan = document.getElementById("playerName");
+                if (playerNameSpan) playerNameSpan.innerText = currentPlayerName;
                 
                 listenToGameUpdates(roomCode);
                 startTimer();
@@ -237,37 +273,42 @@ function joinGame() {
 }
 
 function leaveGame() {
+    console.log("Leaving game...");
     if (currentRoomCode && currentPlayerId) {
         database.ref(`games/${currentRoomCode}/players/${currentPlayerId}`).remove();
     }
-    resetLocalGame();
-    document.getElementById("activeGameView").style.display = "none";
-    document.getElementById("lobbyView").style.display = "block";
-    document.getElementById("roomCodeInput").value = "";
-    currentRoomCode = null;
-    if (timerInterval) clearInterval(timerInterval);
-}
-
-function copyRoomCode() {
-    navigator.clipboard.writeText(currentRoomCode);
-    alert("Room code copied: " + currentRoomCode);
-}
-
-function resetLocalGame() {
+    
     localProgress = {
         codes: [],
         unlockedRoomIds: ["archive"],
         completedPuzzles: [],
         lastRoom: "archive",
         hintsUsed: 0,
-        unlockedLore: []
+        unlockedLore: [],
+        startTime: null
     };
-    hintsRemaining = 3;
-    updateUI();
+    
+    const activeGameView = document.getElementById("activeGameView");
+    const lobbyView = document.getElementById("lobbyView");
+    if (activeGameView) activeGameView.style.display = "none";
+    if (lobbyView) lobbyView.style.display = "block";
+    
+    const roomCodeInput = document.getElementById("roomCodeInput");
+    if (roomCodeInput) roomCodeInput.value = "";
+    
+    currentRoomCode = null;
+    if (timerInterval) clearInterval(timerInterval);
+}
+
+function copyRoomCode() {
+    if (currentRoomCode) {
+        navigator.clipboard.writeText(currentRoomCode);
+        alert("Room code copied: " + currentRoomCode);
+    }
 }
 
 // ============================================
-// GAME FUNCTIONS (Same but push to Firebase)
+// GAME FUNCTIONS
 // ============================================
 function startTimer() {
     if (!localProgress.startTime) {
@@ -279,20 +320,24 @@ function startTimer() {
             let elapsed = Math.floor((Date.now() - localProgress.startTime) / 1000);
             let mins = Math.floor(elapsed / 60);
             let secs = elapsed % 60;
-            document.getElementById("playTimer").innerText = `${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+            const timerSpan = document.getElementById("playTimer");
+            if (timerSpan) timerSpan.innerText = `${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
         }
     }, 1000);
 }
 
 function updateUI() {
-    document.getElementById("codesFound").innerText = localProgress.codes.length;
-    document.getElementById("totalCodes").innerText = gameData.totalCodes;
+    const codesFoundSpan = document.getElementById("codesFound");
+    const totalCodesSpan = document.getElementById("totalCodes");
+    if (codesFoundSpan) codesFoundSpan.innerText = localProgress.codes.length;
+    if (totalCodesSpan) totalCodesSpan.innerText = gameData.totalCodes;
     
     let rank = "📡 Seeker";
     if (localProgress.codes.length >= 5) rank = "🌀 Truthbearer";
     else if (localProgress.codes.length >= 3) rank = "🔍 Archivist";
     else if (localProgress.codes.length >= 1) rank = "✨ Awakened";
-    document.getElementById("playerRank").innerText = rank;
+    const rankSpan = document.getElementById("playerRank");
+    if (rankSpan) rankSpan.innerText = rank;
     
     renderCurrentRoom();
 }
@@ -323,11 +368,14 @@ function renderCurrentRoom() {
         html += `<div class="code-display"><strong>📜 YOUR QUANTUM FRAGMENTS:</strong><br>${localProgress.codes.join(" → ")}</div>`;
     }
     
-    document.getElementById("gameView").innerHTML = html;
+    const gameView = document.getElementById("gameView");
+    if (gameView) gameView.innerHTML = html;
 }
 
 function checkPuzzle(roomId) {
     const input = document.getElementById("puzzleAnswer");
+    if (!input) return;
+    
     const userAnswer = input.value.trim().toLowerCase();
     const room = gameData.rooms[roomId];
     const correctAnswer = room.puzzle.answer.toLowerCase();
@@ -344,25 +392,24 @@ function checkPuzzle(roomId) {
             showLorePopup(room.puzzle.loreUnlock, room.name);
         }
         
-        // Auto-unlock next rooms
         if (room.nextRooms && room.nextRooms.length > 0) {
             room.nextRooms.forEach(nextRoomId => {
                 const nextRoom = gameData.rooms[nextRoomId];
                 if (nextRoom && nextRoom.unlockedBy === room.rewardCode && !localProgress.unlockedRoomIds.includes(nextRoomId)) {
                     localProgress.unlockedRoomIds.push(nextRoomId);
-                    feedback.innerHTML += `<div class="success-message">🔓 New memory unlocked: ${nextRoom.name}</div>`;
+                    if (feedback) feedback.innerHTML += `<div class="success-message">🔓 New memory unlocked: ${nextRoom.name}</div>`;
                 }
             });
         }
         
         pushPlayerUpdate();
         input.value = "";
-        feedback.innerHTML = `<div class="success-message">✓ CORRECT! Fragment: <strong>${room.rewardCode}</strong></div>`;
+        if (feedback) feedback.innerHTML = `<div class="success-message">✓ CORRECT! Fragment: <strong>${room.rewardCode}</strong></div>`;
         updateUI();
     } else if (localProgress.completedPuzzles.includes(roomId)) {
-        feedback.innerHTML = `<div class="success-message">Already solved! Fragment: ${room.rewardCode}</div>`;
+        if (feedback) feedback.innerHTML = `<div class="success-message">Already solved! Fragment: ${room.rewardCode}</div>`;
     } else {
-        feedback.innerHTML = `<div class="error-message">❌ Incorrect. Try again or use hint.</div>`;
+        if (feedback) feedback.innerHTML = `<div class="error-message">❌ Incorrect. Try again or use hint.</div>`;
     }
 }
 
@@ -380,12 +427,13 @@ function showHint() {
         return;
     }
     const room = gameData.rooms[localProgress.lastRoom];
-    if (room.puzzle.hint) {
+    if (room && room.puzzle.hint) {
         alert(`💡 HINT: ${room.puzzle.hint}`);
         hintsRemaining--;
         localProgress.hintsUsed++;
         pushPlayerUpdate();
-        document.getElementById("hintBtn").innerText = `💡 Hint (${hintsRemaining} left)`;
+        const hintBtn = document.getElementById("hintBtn");
+        if (hintBtn) hintBtn.innerText = `💡 Hint (${hintsRemaining} left)`;
     }
 }
 
@@ -399,12 +447,15 @@ function showLorePopup(loreText, roomName) {
 
 function showLore() {
     const loreDiv = document.getElementById("loreContent");
+    if (!loreDiv) return;
+    
     if (localProgress.unlockedLore.length === 0) {
         loreDiv.innerHTML = `<p style="color:#ff8888;">🔒 LORE VAULT LOCKED. Solve puzzles to unlock.</p>`;
     } else {
         loreDiv.innerHTML = `<h3>📖 Archives</h3><p><em>Fragments: ${localProgress.unlockedLore.length}/${Object.keys(gameData.rooms).length}</em></p>${localProgress.unlockedLore.map(l => `<p style="margin:10px 0;padding:8px;background:#00ffcc10;border-left:3px solid #00ffcc;">${l}</p>`).join('')}`;
     }
-    document.getElementById("loreModal").style.display = "block";
+    const modal = document.getElementById("loreModal");
+    if (modal) modal.style.display = "block";
 }
 
 function resetGame() {
@@ -415,7 +466,8 @@ function resetGame() {
             completedPuzzles: [],
             lastRoom: "archive",
             hintsUsed: 0,
-            unlockedLore: []
+            unlockedLore: [],
+            startTime: Date.now()
         };
         hintsRemaining = 3;
         pushPlayerUpdate();
@@ -424,25 +476,53 @@ function resetGame() {
 }
 
 // ============================================
-// EVENT LISTENERS
+// EVENT LISTENERS - Wait for DOM to load
 // ============================================
 document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("createGameBtn").addEventListener("click", createGame);
-    document.getElementById("joinGameBtn").addEventListener("click", () => {
-        const joinSection = document.getElementById("joinSection");
-        joinSection.style.display = joinSection.style.display === "none" ? "flex" : "none";
-    });
-    document.getElementById("confirmJoinBtn").addEventListener("click", joinGame);
-    document.getElementById("copyRoomCodeBtn").addEventListener("click", copyRoomCode);
-    document.getElementById("leaveGameBtn").addEventListener("click", leaveGame);
-    document.getElementById("resetGameBtn").addEventListener("click", resetGame);
-    document.getElementById("hintBtn").addEventListener("click", showHint);
-    document.getElementById("showLoreBtn").addEventListener("click", showLore);
+    console.log("DOM loaded, setting up event listeners...");
+    
+    const createBtn = document.getElementById("createGameBtn");
+    const joinBtn = document.getElementById("joinGameBtn");
+    const confirmJoinBtn = document.getElementById("confirmJoinBtn");
+    const copyBtn = document.getElementById("copyRoomCodeBtn");
+    const leaveBtn = document.getElementById("leaveGameBtn");
+    const resetBtn = document.getElementById("resetGameBtn");
+    const hintBtn = document.getElementById("hintBtn");
+    const loreBtn = document.getElementById("showLoreBtn");
+    
+    if (createBtn) {
+        createBtn.addEventListener("click", createGame);
+        console.log("Create button listener added");
+    } else {
+        console.error("Create game button not found!");
+    }
+    
+    if (joinBtn) {
+        joinBtn.addEventListener("click", () => {
+            const joinSection = document.getElementById("joinSection");
+            if (joinSection) joinSection.style.display = joinSection.style.display === "none" ? "flex" : "none";
+        });
+    }
+    
+    if (confirmJoinBtn) confirmJoinBtn.addEventListener("click", joinGame);
+    if (copyBtn) copyBtn.addEventListener("click", copyRoomCode);
+    if (leaveBtn) leaveBtn.addEventListener("click", leaveGame);
+    if (resetBtn) resetBtn.addEventListener("click", resetGame);
+    if (hintBtn) hintBtn.addEventListener("click", showHint);
+    if (loreBtn) loreBtn.addEventListener("click", showLore);
     
     const modal = document.getElementById("loreModal");
     const closeBtn = document.querySelector(".close");
-    closeBtn.addEventListener("click", () => modal.style.display = "none");
-    window.addEventListener("click", (e) => { if (e.target === modal) modal.style.display = "none"; });
+    if (closeBtn) {
+        closeBtn.addEventListener("click", () => {
+            if (modal) modal.style.display = "none";
+        });
+    }
+    if (modal) {
+        window.addEventListener("click", (e) => {
+            if (e.target === modal) modal.style.display = "none";
+        });
+    }
     
     document.addEventListener("keypress", function(e) {
         if (e.key === "Enter" && document.getElementById("puzzleAnswer")) {
@@ -451,8 +531,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
     
-    // Add fade animation
     const style = document.createElement('style');
     style.textContent = `@keyframes fadeInOut{0%{opacity:0;transform:translate(-50%,-60%)}15%{opacity:1;transform:translate(-50%,-50%)}85%{opacity:1}100%{opacity:0;visibility:hidden}}`;
     document.head.appendChild(style);
+    
+    console.log("All event listeners set up!");
 });
