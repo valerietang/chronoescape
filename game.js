@@ -91,7 +91,7 @@ A blinking cursor asks: WHAT AM I? (5 letters)`,
 };
 
 // ============================================
-// GAME STATE
+// GLOBAL SHARED GAME STATE (Synced across players)
 // ============================================
 let currentRoomCode = null;
 let currentPlayerId = null;
@@ -99,86 +99,113 @@ let currentPlayerName = null;
 let hintsRemaining = 3;
 let timerInterval = null;
 
-let localProgress = {
-    codes: [],
+// This is the SHARED state that all players see
+let sharedGameState = {
+    codes: [],           // All codes collected by ANY player in the room
     unlockedRoomIds: ["archive"],
     completedPuzzles: [],
+    unlockedLore: []
+};
+
+// This is the player's own progress (last room, hints used)
+let localPlayerState = {
     lastRoom: "archive",
     hintsUsed: 0,
-    unlockedLore: [],
     startTime: null
 };
 
 // ============================================
-// HELPER: Generate safe Firebase key (no dots or special chars)
+// HELPER: Generate safe Firebase key
 // ============================================
 function generateSafePlayerId() {
-    // Use timestamp + random string, but replace any dots with underscores
-    const timestamp = Date.now();
-    const random = Math.random().toString(36).substring(2, 10);
-    // Firebase keys can't have ., #, $, /, [, ]
-    return `player_${timestamp}_${random}`.replace(/[.#$\/[\]]/g, '_');
+    return `player_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`.replace(/[.#$\/[\]]/g, '_');
 }
 
 // ============================================
-// FIREBASE FUNCTIONS
+// FIREBASE LISTENERS - REAL-TIME SYNC
 // ============================================
-function listenToGameUpdates(roomCode) {
-    console.log("Listening to game updates for room:", roomCode);
-    const gameRef = database.ref(`games/${roomCode}`);
+
+// Listen to SHARED game state (same for all players)
+function listenToSharedGameState(roomCode) {
+    console.log("Listening to shared game state for room:", roomCode);
+    const sharedRef = database.ref(`games/${roomCode}/shared`);
     
-    gameRef.on('value', (snapshot) => {
-        const game = snapshot.val();
-        console.log("Game update received");
+    sharedRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        console.log("Shared state update received:", data);
         
-        if (game && game.players && game.players[currentPlayerId]) {
-            const playerData = game.players[currentPlayerId];
-            localProgress.codes = playerData.codes || [];
-            localProgress.unlockedRoomIds = playerData.unlockedRoomIds || ["archive"];
-            localProgress.completedPuzzles = playerData.completedPuzzles || [];
-            localProgress.lastRoom = playerData.lastRoom || "archive";
-            localProgress.hintsUsed = playerData.hintsUsed || 0;
-            localProgress.unlockedLore = playerData.unlockedLore || [];
+        if (data) {
+            // Update the shared state with what's in Firebase
+            sharedGameState.codes = data.codes || [];
+            sharedGameState.unlockedRoomIds = data.unlockedRoomIds || ["archive"];
+            sharedGameState.completedPuzzles = data.completedPuzzles || [];
+            sharedGameState.unlockedLore = data.unlockedLore || [];
             
-            hintsRemaining = Math.max(0, 3 - localProgress.hintsUsed);
+            console.log("Updated shared state:", sharedGameState);
+            updateUI();
+        }
+    });
+}
+
+// Listen to player-specific state (last room, hints)
+function listenToPlayerState(roomCode, playerId) {
+    console.log("Listening to player state for:", playerId);
+    const playerRef = database.ref(`games/${roomCode}/players/${playerId}`);
+    
+    playerRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        console.log("Player state update received:", data);
+        
+        if (data) {
+            localPlayerState.lastRoom = data.lastRoom || "archive";
+            localPlayerState.hintsUsed = data.hintsUsed || 0;
+            localPlayerState.startTime = data.startTime || null;
+            
+            hintsRemaining = Math.max(0, 3 - localPlayerState.hintsUsed);
             const hintBtn = document.getElementById("hintBtn");
             if (hintBtn) hintBtn.innerText = `💡 Hint (${hintsRemaining} left)`;
             
             updateUI();
         }
-        
-        if (game && game.players) {
-            const playerCount = Object.keys(game.players).length;
-            const playerCountSpan = document.getElementById("playerCount");
-            if (playerCountSpan) playerCountSpan.innerText = playerCount;
-        }
     });
 }
 
-function pushPlayerUpdate() {
-    if (!currentRoomCode || !currentPlayerId) {
-        console.log("Cannot push update - no room or player ID");
-        return;
-    }
+// Update SHARED state (affects all players)
+function updateSharedState() {
+    if (!currentRoomCode) return;
     
-    console.log("Pushing player update to Firebase");
+    console.log("Updating shared state:", sharedGameState);
+    const sharedRef = database.ref(`games/${currentRoomCode}/shared`);
+    sharedRef.update({
+        codes: sharedGameState.codes,
+        unlockedRoomIds: sharedGameState.unlockedRoomIds,
+        completedPuzzles: sharedGameState.completedPuzzles,
+        unlockedLore: sharedGameState.unlockedLore,
+        lastUpdated: Date.now()
+    }).catch(error => {
+        console.error("Error updating shared state:", error);
+    });
+}
+
+// Update player-specific state
+function updatePlayerState() {
+    if (!currentRoomCode || !currentPlayerId) return;
+    
     const playerRef = database.ref(`games/${currentRoomCode}/players/${currentPlayerId}`);
     playerRef.update({
-        codes: localProgress.codes,
-        unlockedRoomIds: localProgress.unlockedRoomIds,
-        completedPuzzles: localProgress.completedPuzzles,
-        lastRoom: localProgress.lastRoom,
-        hintsUsed: localProgress.hintsUsed,
-        unlockedLore: localProgress.unlockedLore,
-        lastActive: Date.now(),
-        playerName: currentPlayerName
-    }).then(() => {
-        console.log("Player update successful");
+        lastRoom: localPlayerState.lastRoom,
+        hintsUsed: localPlayerState.hintsUsed,
+        startTime: localPlayerState.startTime,
+        playerName: currentPlayerName,
+        lastActive: Date.now()
     }).catch(error => {
-        console.error("Error pushing update:", error);
+        console.error("Error updating player state:", error);
     });
 }
 
+// ============================================
+// MULTIPLAYER FUNCTIONS
+// ============================================
 function generateRoomCode() {
     return Math.random().toString(36).substring(2, 8).toUpperCase();
 }
@@ -186,32 +213,49 @@ function generateRoomCode() {
 function createGame() {
     console.log("Create Game button clicked!");
     const roomCode = generateRoomCode();
-    currentPlayerId = generateSafePlayerId();  // FIXED: No dots!
+    currentPlayerId = generateSafePlayerId();
     currentPlayerName = prompt("Enter your name:", "Archivist_" + Math.floor(Math.random() * 1000));
     if (!currentPlayerName) currentPlayerName = "Seeker";
     
     console.log("Creating room:", roomCode);
-    console.log("Player ID (safe):", currentPlayerId);
-    console.log("Player Name:", currentPlayerName);
     
+    // Initialize the game room with shared state and first player
     const gameRef = database.ref(`games/${roomCode}`);
     gameRef.set({
         createdAt: Date.now(),
+        shared: {
+            codes: [],
+            unlockedRoomIds: ["archive"],
+            completedPuzzles: [],
+            unlockedLore: []
+        },
         players: {
             [currentPlayerId]: {
                 playerName: currentPlayerName,
-                codes: [],
-                unlockedRoomIds: ["archive"],
-                completedPuzzles: [],
                 lastRoom: "archive",
                 hintsUsed: 0,
-                unlockedLore: [],
+                startTime: Date.now(),
                 lastActive: Date.now()
             }
         }
     }).then(() => {
         console.log("Room created successfully!");
         currentRoomCode = roomCode;
+        
+        // Initialize local state
+        sharedGameState = {
+            codes: [],
+            unlockedRoomIds: ["archive"],
+            completedPuzzles: [],
+            unlockedLore: []
+        };
+        localPlayerState = {
+            lastRoom: "archive",
+            hintsUsed: 0,
+            startTime: Date.now()
+        };
+        
+        // Update UI
         const roomCodeDisplay = document.getElementById("roomCodeDisplay");
         if (roomCodeDisplay) roomCodeDisplay.innerText = roomCode;
         
@@ -223,7 +267,9 @@ function createGame() {
         const playerNameSpan = document.getElementById("playerName");
         if (playerNameSpan) playerNameSpan.innerText = currentPlayerName;
         
-        listenToGameUpdates(roomCode);
+        // Start listening for updates
+        listenToSharedGameState(roomCode);
+        listenToPlayerState(roomCode, currentPlayerId);
         startTimer();
         updateUI();
     }).catch(error => {
@@ -242,7 +288,7 @@ function joinGame() {
         return;
     }
     
-    currentPlayerId = generateSafePlayerId();  // FIXED: No dots!
+    currentPlayerId = generateSafePlayerId();
     currentPlayerName = prompt("Enter your name:", "Archivist_" + Math.floor(Math.random() * 1000));
     if (!currentPlayerName) currentPlayerName = "Seeker";
     
@@ -250,17 +296,32 @@ function joinGame() {
     gameRef.once('value', (snapshot) => {
         if (snapshot.exists()) {
             console.log("Room exists, joining...");
+            
+            // Add player to the room
             gameRef.child(`players/${currentPlayerId}`).set({
                 playerName: currentPlayerName,
-                codes: [],
-                unlockedRoomIds: ["archive"],
-                completedPuzzles: [],
                 lastRoom: "archive",
                 hintsUsed: 0,
-                unlockedLore: [],
+                startTime: Date.now(),
                 lastActive: Date.now()
             }).then(() => {
                 currentRoomCode = roomCode;
+                
+                // Get current shared state
+                const sharedData = snapshot.val().shared || {};
+                sharedGameState = {
+                    codes: sharedData.codes || [],
+                    unlockedRoomIds: sharedData.unlockedRoomIds || ["archive"],
+                    completedPuzzles: sharedData.completedPuzzles || [],
+                    unlockedLore: sharedData.unlockedLore || []
+                };
+                localPlayerState = {
+                    lastRoom: "archive",
+                    hintsUsed: 0,
+                    startTime: Date.now()
+                };
+                
+                // Update UI
                 const roomCodeDisplay = document.getElementById("roomCodeDisplay");
                 if (roomCodeDisplay) roomCodeDisplay.innerText = roomCode;
                 
@@ -272,7 +333,9 @@ function joinGame() {
                 const playerNameSpan = document.getElementById("playerName");
                 if (playerNameSpan) playerNameSpan.innerText = currentPlayerName;
                 
-                listenToGameUpdates(roomCode);
+                // Start listening
+                listenToSharedGameState(roomCode);
+                listenToPlayerState(roomCode, currentPlayerId);
                 startTimer();
                 updateUI();
             });
@@ -288,13 +351,16 @@ function leaveGame() {
         database.ref(`games/${currentRoomCode}/players/${currentPlayerId}`).remove();
     }
     
-    localProgress = {
+    // Reset state
+    sharedGameState = {
         codes: [],
         unlockedRoomIds: ["archive"],
         completedPuzzles: [],
+        unlockedLore: []
+    };
+    localPlayerState = {
         lastRoom: "archive",
         hintsUsed: 0,
-        unlockedLore: [],
         startTime: null
     };
     
@@ -308,6 +374,7 @@ function leaveGame() {
     
     currentRoomCode = null;
     if (timerInterval) clearInterval(timerInterval);
+    updateUI();
 }
 
 function copyRoomCode() {
@@ -321,13 +388,14 @@ function copyRoomCode() {
 // GAME FUNCTIONS
 // ============================================
 function startTimer() {
-    if (!localProgress.startTime) {
-        localProgress.startTime = Date.now();
+    if (!localPlayerState.startTime) {
+        localPlayerState.startTime = Date.now();
+        updatePlayerState();
     }
     if (timerInterval) clearInterval(timerInterval);
     timerInterval = setInterval(() => {
-        if (localProgress.startTime) {
-            let elapsed = Math.floor((Date.now() - localProgress.startTime) / 1000);
+        if (localPlayerState.startTime) {
+            let elapsed = Math.floor((Date.now() - localPlayerState.startTime) / 1000);
             let mins = Math.floor(elapsed / 60);
             let secs = elapsed % 60;
             const timerSpan = document.getElementById("playTimer");
@@ -339,13 +407,13 @@ function startTimer() {
 function updateUI() {
     const codesFoundSpan = document.getElementById("codesFound");
     const totalCodesSpan = document.getElementById("totalCodes");
-    if (codesFoundSpan) codesFoundSpan.innerText = localProgress.codes.length;
+    if (codesFoundSpan) codesFoundSpan.innerText = sharedGameState.codes.length;
     if (totalCodesSpan) totalCodesSpan.innerText = gameData.totalCodes;
     
     let rank = "📡 Seeker";
-    if (localProgress.codes.length >= 5) rank = "🌀 Truthbearer";
-    else if (localProgress.codes.length >= 3) rank = "🔍 Archivist";
-    else if (localProgress.codes.length >= 1) rank = "✨ Awakened";
+    if (sharedGameState.codes.length >= 5) rank = "🌀 Truthbearer";
+    else if (sharedGameState.codes.length >= 3) rank = "🔍 Archivist";
+    else if (sharedGameState.codes.length >= 1) rank = "✨ Awakened";
     const rankSpan = document.getElementById("playerRank");
     if (rankSpan) rankSpan.innerText = rank;
     
@@ -353,29 +421,29 @@ function updateUI() {
 }
 
 function renderCurrentRoom() {
-    const roomId = localProgress.lastRoom;
+    const roomId = localPlayerState.lastRoom;
     const room = gameData.rooms[roomId];
     if (!room) return;
     
-    const isCompleted = localProgress.completedPuzzles.includes(roomId);
+    const isCompleted = sharedGameState.completedPuzzles.includes(roomId);
     let html = `<div class="room-card"><div class="room-title">${room.name}</div><div class="room-description" style="white-space: pre-line;">${room.description}</div>`;
     
     if (!isCompleted) {
         html += `<div class="puzzle-area"><div class="puzzle-question">🔐 ${room.puzzle.question}</div><div class="puzzle-input"><input type="text" id="puzzleAnswer" placeholder="Your answer..." autocomplete="off"><button onclick="checkPuzzle('${roomId}')">Submit</button></div><div id="puzzleFeedback"></div><div class="puzzle-hint" style="font-size:0.8rem; margin-top:10px;">💡 Hint available (${hintsRemaining} left)</div></div>`;
     } else {
-        html += `<div class="code-display" style="background: #00ffcc20; border: 2px solid #00ffcc;">✨ QUANTUM FRAGMENT RECOVERED! ✨<br><strong style="color: #ffcc88; font-size: 1.6rem; letter-spacing: 3px;">${room.rewardCode}</strong><div class="success-message" style="margin-top: 10px;">Share this code with teammates!</div></div>`;
+        html += `<div class="code-display" style="background: #00ffcc20; border: 2px solid #00ffcc;">✨ QUANTUM FRAGMENT RECOVERED! ✨<br><strong style="color: #ffcc88; font-size: 1.6rem; letter-spacing: 3px;">${room.rewardCode}</strong><div class="success-message" style="margin-top: 10px;">All players now have this code!</div></div>`;
     }
     
     html += `</div><div class="room-list"><h3>📍 ACCESSIBLE MEMORIES:</h3>`;
     for (const [id, roomData] of Object.entries(gameData.rooms)) {
-        const unlocked = localProgress.unlockedRoomIds.includes(id);
-        const isCurrent = (id === localProgress.lastRoom);
+        const unlocked = sharedGameState.unlockedRoomIds.includes(id);
+        const isCurrent = (id === localPlayerState.lastRoom);
         html += `<button class="room-button ${unlocked ? 'unlocked' : 'locked'}" onclick="changeRoom('${id}')" ${!unlocked ? 'disabled' : ''}>${isCurrent ? "🧠 " : ""}${roomData.name} ${unlocked ? "✓" : "🔒"}</button>`;
     }
     html += `</div>`;
     
-    if (localProgress.codes.length > 0) {
-        html += `<div class="code-display"><strong>📜 YOUR QUANTUM FRAGMENTS:</strong><br>${localProgress.codes.join(" → ")}</div>`;
+    if (sharedGameState.codes.length > 0) {
+        html += `<div class="code-display"><strong>📜 QUANTUM FRAGMENTS (Team):</strong><br>${sharedGameState.codes.join(" → ")}</div>`;
     }
     
     const gameView = document.getElementById("gameView");
@@ -391,42 +459,57 @@ function checkPuzzle(roomId) {
     const correctAnswer = room.puzzle.answer.toLowerCase();
     const feedback = document.getElementById("puzzleFeedback");
     
-    if (userAnswer === correctAnswer && !localProgress.completedPuzzles.includes(roomId)) {
-        localProgress.completedPuzzles.push(roomId);
-        if (!localProgress.codes.includes(room.rewardCode)) {
-            localProgress.codes.push(room.rewardCode);
+    // Check if already solved by ANYONE in the room
+    if (sharedGameState.completedPuzzles.includes(roomId)) {
+        if (feedback) feedback.innerHTML = `<div class="success-message">Already solved by your team! Fragment: ${room.rewardCode}</div>`;
+        return;
+    }
+    
+    if (userAnswer === correctAnswer) {
+        console.log("Puzzle solved! Updating shared state...");
+        
+        // Add to shared completion
+        if (!sharedGameState.completedPuzzles.includes(roomId)) {
+            sharedGameState.completedPuzzles.push(roomId);
         }
         
-        if (room.puzzle.loreUnlock && !localProgress.unlockedLore.includes(room.puzzle.loreUnlock)) {
-            localProgress.unlockedLore.push(room.puzzle.loreUnlock);
+        // Add code to shared collection
+        if (!sharedGameState.codes.includes(room.rewardCode)) {
+            sharedGameState.codes.push(room.rewardCode);
+        }
+        
+        // Add lore to shared collection
+        if (room.puzzle.loreUnlock && !sharedGameState.unlockedLore.includes(room.puzzle.loreUnlock)) {
+            sharedGameState.unlockedLore.push(room.puzzle.loreUnlock);
             showLorePopup(room.puzzle.loreUnlock, room.name);
         }
         
+        // Auto-unlock next rooms for ALL players
         if (room.nextRooms && room.nextRooms.length > 0) {
             room.nextRooms.forEach(nextRoomId => {
                 const nextRoom = gameData.rooms[nextRoomId];
-                if (nextRoom && nextRoom.unlockedBy === room.rewardCode && !localProgress.unlockedRoomIds.includes(nextRoomId)) {
-                    localProgress.unlockedRoomIds.push(nextRoomId);
-                    if (feedback) feedback.innerHTML += `<div class="success-message">🔓 New memory unlocked: ${nextRoom.name}</div>`;
+                if (nextRoom && nextRoom.unlockedBy === room.rewardCode && !sharedGameState.unlockedRoomIds.includes(nextRoomId)) {
+                    sharedGameState.unlockedRoomIds.push(nextRoomId);
+                    if (feedback) feedback.innerHTML += `<div class="success-message">🔓 New memory unlocked for everyone: ${nextRoom.name}</div>`;
                 }
             });
         }
         
-        pushPlayerUpdate();
+        // Update Firebase (this will sync to ALL players)
+        updateSharedState();
+        
         input.value = "";
-        if (feedback) feedback.innerHTML = `<div class="success-message">✓ CORRECT! Fragment: <strong>${room.rewardCode}</strong></div>`;
+        if (feedback) feedback.innerHTML = `<div class="success-message">✓ CORRECT! Fragment added to team: <strong>${room.rewardCode}</strong></div>`;
         updateUI();
-    } else if (localProgress.completedPuzzles.includes(roomId)) {
-        if (feedback) feedback.innerHTML = `<div class="success-message">Already solved! Fragment: ${room.rewardCode}</div>`;
     } else {
         if (feedback) feedback.innerHTML = `<div class="error-message">❌ Incorrect. Try again or use hint.</div>`;
     }
 }
 
 function changeRoom(roomId) {
-    if (localProgress.unlockedRoomIds.includes(roomId)) {
-        localProgress.lastRoom = roomId;
-        pushPlayerUpdate();
+    if (sharedGameState.unlockedRoomIds.includes(roomId)) {
+        localPlayerState.lastRoom = roomId;
+        updatePlayerState();
         updateUI();
     }
 }
@@ -436,12 +519,12 @@ function showHint() {
         alert("No hints left!");
         return;
     }
-    const room = gameData.rooms[localProgress.lastRoom];
+    const room = gameData.rooms[localPlayerState.lastRoom];
     if (room && room.puzzle.hint) {
         alert(`💡 HINT: ${room.puzzle.hint}`);
         hintsRemaining--;
-        localProgress.hintsUsed++;
-        pushPlayerUpdate();
+        localPlayerState.hintsUsed++;
+        updatePlayerState();
         const hintBtn = document.getElementById("hintBtn");
         if (hintBtn) hintBtn.innerText = `💡 Hint (${hintsRemaining} left)`;
     }
@@ -450,7 +533,7 @@ function showHint() {
 function showLorePopup(loreText, roomName) {
     const popup = document.createElement('div');
     popup.style.cssText = `position:fixed;top:20%;left:50%;transform:translate(-50%,-50%);background:#0a2a2a;border:2px solid #00ffcc;border-radius:20px;padding:20px;color:#b8f2e2;z-index:2000;box-shadow:0 0 50px cyan;text-align:center;animation:fadeInOut 5s forwards;`;
-    popup.innerHTML = `<strong>📜 LORE: ${roomName}</strong><br><br>${loreText}<br><br><small>✓ Added to Archives</small>`;
+    popup.innerHTML = `<strong>📜 LORE: ${roomName}</strong><br><br>${loreText}<br><br><small>✓ Added to Team Archives</small>`;
     document.body.appendChild(popup);
     setTimeout(() => popup.remove(), 5000);
 }
@@ -459,28 +542,31 @@ function showLore() {
     const loreDiv = document.getElementById("loreContent");
     if (!loreDiv) return;
     
-    if (localProgress.unlockedLore.length === 0) {
+    if (sharedGameState.unlockedLore.length === 0) {
         loreDiv.innerHTML = `<p style="color:#ff8888;">🔒 LORE VAULT LOCKED. Solve puzzles to unlock.</p>`;
     } else {
-        loreDiv.innerHTML = `<h3>📖 Archives</h3><p><em>Fragments: ${localProgress.unlockedLore.length}/${Object.keys(gameData.rooms).length}</em></p>${localProgress.unlockedLore.map(l => `<p style="margin:10px 0;padding:8px;background:#00ffcc10;border-left:3px solid #00ffcc;">${l}</p>`).join('')}`;
+        loreDiv.innerHTML = `<h3>📖 Archives</h3><p><em>Team Fragments: ${sharedGameState.unlockedLore.length}/${Object.keys(gameData.rooms).length}</em></p>${sharedGameState.unlockedLore.map(l => `<p style="margin:10px 0;padding:8px;background:#00ffcc10;border-left:3px solid #00ffcc;">${l}</p>`).join('')}`;
     }
     const modal = document.getElementById("loreModal");
     if (modal) modal.style.display = "block";
 }
 
 function resetGame() {
-    if (confirm("⚠️ Reset ALL progress? This affects ONLY you, not your team.")) {
-        localProgress = {
+    if (confirm("⚠️ Reset ALL progress for the TEAM? This affects ALL players in the room!")) {
+        sharedGameState = {
             codes: [],
             unlockedRoomIds: ["archive"],
             completedPuzzles: [],
+            unlockedLore: []
+        };
+        localPlayerState = {
             lastRoom: "archive",
             hintsUsed: 0,
-            unlockedLore: [],
             startTime: Date.now()
         };
         hintsRemaining = 3;
-        pushPlayerUpdate();
+        updateSharedState();
+        updatePlayerState();
         updateUI();
     }
 }
@@ -503,8 +589,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (createBtn) {
         createBtn.addEventListener("click", createGame);
         console.log("Create button listener added");
-    } else {
-        console.error("Create game button not found!");
     }
     
     if (joinBtn) {
@@ -536,7 +620,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
     document.addEventListener("keypress", function(e) {
         if (e.key === "Enter" && document.getElementById("puzzleAnswer")) {
-            const roomId = localProgress.lastRoom;
+            const roomId = localPlayerState.lastRoom;
             if (roomId) checkPuzzle(roomId);
         }
     });
