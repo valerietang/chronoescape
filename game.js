@@ -1,10 +1,19 @@
+// ██████████████████████████████████████████████████████████████████████████
+//                      THE LAST QUESTION v4.4
+//              Quantum Collective - FULLY COMPLETE
+// ██████████████████████████████████████████████████████████████████████████
+
+// ============================================
+// REPLACE THIS WITH YOUR FIREBASE CONFIG
+// ============================================
 const firebaseConfig = {
-    apiKey: "AIzaSyA2ZgFjcWpQfQEt4960csO0pCU3jyLpXZc",
-    authDomain: "chrono-escape-v2.firebaseapp.com",
-    projectId: "chrono-escape-v2",
-    storageBucket: "chrono-escape-v2.firebasestorage.app",
-    messagingSenderId: "131420121282",
-    appId: "1:131420121282:web:7dbce4e95f96241cef735b"
+    apiKey: "YOUR_API_KEY_HERE",
+    authDomain: "YOUR_AUTH_DOMAIN_HERE",
+    databaseURL: "YOUR_DATABASE_URL_HERE",
+    projectId: "YOUR_PROJECT_ID_HERE",
+    storageBucket: "YOUR_STORAGE_BUCKET_HERE",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID_HERE",
+    appId: "YOUR_APP_ID_HERE"
 };
 
 // Initialize Firebase
