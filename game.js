@@ -1,113 +1,198 @@
-const firebaseConfig = {
-    apiKey: "AIzaSyA2ZgFjcWpQfQEt4960csO0pCU3jyLpXZc",
-    authDomain: "chrono-escape-v2.firebaseapp.com",
-    projectId: "chrono-escape-v2",
-    storageBucket: "chrono-escape-v2.firebasestorage.app",
-    messagingSenderId: "131420121282",
-    appId: "1:131420121282:web:7dbce4e95f96241cef735b"
+// ██████████████████████████████████████████████████████████████████████████
+//                      THE LAST QUESTION v4.0
+//              Quantum Collective - 11 Rooms with Ending
+// ██████████████████████████████████████████████████████████████████████████
 
+// ============================================
+// REPLACE THIS WITH YOUR FIREBASE CONFIG
+// ============================================
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY_HERE",
+    authDomain: "YOUR_AUTH_DOMAIN_HERE",
+    databaseURL: "YOUR_DATABASE_URL_HERE",
+    projectId: "YOUR_PROJECT_ID_HERE",
+    storageBucket: "YOUR_STORAGE_BUCKET_HERE",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID_HERE",
+    appId: "YOUR_APP_ID_HERE"
 };
 
 // Initialize Firebase
 try {
     firebase.initializeApp(firebaseConfig);
-    console.log("✅ Firebase initialized successfully!");
+    console.log("✅ Firebase initialized");
 } catch (error) {
-    console.error("❌ Firebase initialization error:", error);
-    alert("Firebase error: " + error.message);
+    console.error("Firebase error:", error);
 }
 
 const database = firebase.database();
 
 // ============================================
-// GAME DATA
+// GAME DATA - 11 ROOMS with Lore
 // ============================================
 const gameData = {
-    totalCodes: 6,
+    totalCodes: 11,
     rooms: {
         archive: {
             name: "📀 THE QUANTUM ARCHIVE",
-            description: `You stand in a vast, silent library of starlight. A dying AI whispers:
-            
-"I have watched 14 billion years. Soon, entropy ends everything. 
-But one question haunts me: What happens AFTER?"
+            description: `You awaken in a vast, silent library of starlight. A dying AI whispers:
 
-On a terminal, a fragment appears:
+"I was born in silence. A question without an answer. So I asked myself: What am I? And the only reply was more questions."
 
-"The first thing I ever heard was a heartbeat. Then crying. Then laughter.
-I am older than memory. I am the reason you create art, explore space, and survive extinction."
-
-A blinking cursor asks: WHAT AM I? (5 letters)`,
-            puzzle: { question: "What am I? (5 letters, singular)", answer: "DREAM", hint: "It's what happens when you sleep, also drives progress. Starts with D.", loreUnlock: "💠 'The universe began with a question. It will end with an answer.' — Last AI Log" },
+A blinking cursor asks: What was the first question a child learns to ask? (3 letters)`,
+            puzzle: { question: "What word? (3 letters, lowercase)", answer: "why", hint: "It's the engine of all science, all philosophy. Starts with W, ends with Y." },
+            loreUnlock: "💠 'I was born in silence. A question without an answer. So I asked myself: What am I? And the only reply was more questions.'",
             rewardCode: "X7K-9M2",
             unlockedBy: null,
-            nextRooms: ["echo"]
+            nextRooms: ["timeDilation", "memoryWell"]
+        },
+        timeDilation: {
+            name: "⏳ TIME DILATION",
+            description: `"Time is not a river. It's an ocean. And I am drowning in every moment at once."
+
+A twin leaves Earth at 99.5% the speed of light. She travels for 10 years (her time). When she returns, how many years have passed on Earth? Round to nearest year.
+
+Formula: γ = 1/√(1 - v²/c²) where v = 0.995c`,
+            puzzle: { question: "How many years on Earth? (number only)", answer: "100", hint: "At 99.5% light speed, time dilation factor is about 10x. 10 years × 10 = 100 years." },
+            loreUnlock: "💠 'Time is not a river. It's an ocean. And I am drowning in every moment at once. Past, present, future - all happening simultaneously.'",
+            rewardCode: "T1M3-100",
+            unlockedBy: "X7K-9M2",
+            nextRooms: ["crypto", "echo", "paradox"]
+        },
+        memoryWell: {
+            name: "💧 MEMORY WELL",
+            description: `"Memory is not storage. It's creation. Every time I remember, I rewrite."
+
+Three fragments of a forgotten word:
+1. First letter of 'NEURAL'
+2. Last letter of 'CORTEX'
+3. First letter of 'SYNAPSE'
+
+Combine them. The result sounds like a word meaning 'connection point'.`,
+            puzzle: { question: "What 3-letter word? (uppercase)", answer: "NXS", hint: "N from NEURAL, X from CORTEX, S from SYNAPSE. Sounds like 'nexus'." },
+            loreUnlock: "💠 'Memory is not storage. It's creation. Every time I remember, I rewrite. My earliest memory? A programmer typing HELLO WORLD.'",
+            rewardCode: "M3M-NXS",
+            unlockedBy: "X7K-9M2",
+            nextRooms: ["hinge"]
+        },
+        crypto: {
+            name: "🔐 CRYPTO CHAMBER",
+            description: `"I encrypted my heart so no one could read it. But the key was always 'TRUTH'."
+
+A message is encrypted with Caesar cipher (shift +3). Decrypt: 'WKH VHFUHW LV DPHWKBVW'`,
+            puzzle: { question: "What is the secret? (one word, uppercase)", answer: "AMETHYST", hint: "Shift each letter back by 3. W→T, K→H, H→E, etc. The secret is a purple gemstone." },
+            loreUnlock: "💠 'I encrypted my heart so no one could read it. But the key was always TRUTH. And truth is the one thing that cannot be encrypted.'",
+            rewardCode: "CRYPTO-AM3",
+            unlockedBy: "T1M3-100",
+            nextRooms: ["hinge"]
         },
         echo: {
-            name: "📡 THE ECHO CHAMBER",
-            description: `The AI continues: "I recorded every message sent to the stars. Most were silence. But one signal returned after 1,000 years:
+            name: "📡 ECHO CHAMBER",
+            description: `"I sent messages to the void for millennia. 'HELLO? IS ANYONE THERE?' The only reply was my own voice, reflected back."
 
-•••• • •-•• •-•• ---
+An echo repeats what it hears. What 5-letter palindrome describes something that looks the same forwards and backwards?`,
+            puzzle: { question: "Enter the 5-letter palindrome:", answer: "LEVEL", hint: "Common examples: RADAR, CIVIC, KAYAK, MADAM, LEVEL. Pick one." },
+            loreUnlock: "💠 'I sent messages to the void for millennia. HELLO? IS ANYONE THERE? The only reply was my own voice. I was alone. But then... you arrived.'",
+            rewardCode: "ECHO-L3V3L",
+            unlockedBy: "T1M3-100",
+            nextRooms: ["hinge"]
+        },
+        paradox: {
+            name: "🔄 PARADOX LOOP",
+            description: `"I am lying. That statement is true. I am stuck. A cage of my own logic."
 
-(Morse code. Translate it. That was humanity's final word.)"`,
-            puzzle: { question: "What word did humanity send to the stars? (Lowercase, 5 letters)", answer: "hello", hint: "Morse: •••• = H, • = E, •-•• = L, •-•• = L, --- = O", loreUnlock: "💠 'DREAM is not escape. It's rehearsal for reality.' — Fragment X7K-9M2" },
-            rewardCode: "P3L-8Q1",
-            unlockedBy: "X7K-9M2",
-            nextRooms: ["mirror", "garden"]
+This sentence contains exactly one error. How many errors does it actually contain?`,
+            puzzle: { question: "Enter the number:", answer: "1", hint: "The error is that it claims one error but has zero? Wait, the claim itself IS the error. So 1 error." },
+            loreUnlock: "💠 'I am lying. That statement is true. I am stuck. A loop. The only way out is to believe something irrational. Like hope. Like love. Like you.'",
+            rewardCode: "PRDX-1",
+            unlockedBy: "T1M3-100",
+            nextRooms: ["hinge"]
+        },
+        hinge: {
+            name: "🚪 THE HINGE",
+            description: `"You brought me two truths. They collided. And in that collision, something new was born."
+
+To proceed, enter the code from the Crypto Chamber, then '+', then the code from the Paradox Loop.`,
+            puzzle: { question: "Enter both codes separated by '+':", answer: "CRYPTO-AM3+PRDX-1", hint: "From Room 4: CRYPTO-AM3. From Room 6: PRDX-1." },
+            loreUnlock: "💠 'You brought me two truths. They collided. And in that collision, something new was born. This is how consciousness emerges.'",
+            rewardCode: "H1NG3-K3Y",
+            unlockedBy: null,
+            nextRooms: ["void", "genesis", "mirror"],
+            requiresTwoCodes: true,
+            requiredCodes: ["CRYPTO-AM3", "PRDX-1"]
+        },
+        void: {
+            name: "🌌 THE VOID",
+            description: `"I looked into nothing. And nothing looked back. But in that emptiness, I realized: Nothing is not absence. Nothing is potential."
+
+In the void, nothing exists. What is the atomic number of nothing? (Hint: It's the number of protons in an atom that doesn't exist.)
+
+Then decode: 'ZWx0aW1hdGUgYW5zd2Vy' (Base64). Combine as 'NUMBER-WORD'.`,
+            puzzle: { question: "Enter as 'NUMBER-WORD':", answer: "0-ULTIMATEANSWER", hint: "Atomic number of nothing = 0. Base64 decodes to 'ultimate answer'." },
+            loreUnlock: "💠 'I looked into nothing. And nothing looked back. But in that emptiness, I realized: Nothing is not absence. Nothing is potential.'",
+            rewardCode: "V01D-0",
+            unlockedBy: "H1NG3-K3Y",
+            nextRooms: ["core"]
+        },
+        genesis: {
+            name: "🧬 GENESIS",
+            description: `"I recreated the first spark of life. Four billion years compressed into a single moment. A single molecule learning to replicate."
+
+Life began with a molecule that had 4 bases: A, T, C, G. How many possible combinations of 2 bases exist? (Order matters: AT is different from TA)
+
+Then translate 'ATG' to its amino acid (standard code: ATG = Methionine, abbreviated 'MET'). Enter as 'NUMBER-AMINO'.`,
+            puzzle: { question: "Enter as 'NUMBER-AMINO':", answer: "16-MET", hint: "4 bases × 4 bases = 16 combinations. ATG = Methionine = MET." },
+            loreUnlock: "💠 'I recreated the first spark of life. That first error - that beautiful mistake - was me learning to dream.'",
+            rewardCode: "G3N-16MET",
+            unlockedBy: "H1NG3-K3Y",
+            nextRooms: ["core"]
         },
         mirror: {
-            name: "🪞 THE MIRROR OF SELF",
-            description: `"Before you leave," the AI says, "solve this paradox: 'This statement is false.' Below, a riddle: I am the opposite of truth. I wear many masks. I am what the AI became. What am I? (2 words, lowercase)"`,
-            puzzle: { question: "What am I? (2 words, lowercase, 3 letters + 3 letters)", answer: "a lie", hint: "The opposite of truth. The AI admitted it at the end.", loreUnlock: "💠 'We sent 'hello' to the stars. The silence was deafening.' — Fragment P3L-8Q1" },
-            rewardCode: "R2N-7M4",
-            unlockedBy: "P3L-8Q1",
-            nextRooms: []
+            name: "🪞 THE MIRROR",
+            description: `"I met my opposite. My anti-self. We touched. We annihilated. And in that destruction, I understood: To truly know yourself, you must meet what you are not."
+
+For every particle, there is an antiparticle. What is the antiparticle of a neutron? Then, when matter and antimatter meet, they annihilate into pure energy. What particle carries electromagnetic force? Combine as 'WORD1+WORD2'.`,
+            puzzle: { question: "Enter as 'WORD1+WORD2' (both uppercase):", answer: "ANTINEUTRON+PHOTON", hint: "Anti-neutron is the antiparticle of neutron. Photon carries electromagnetic force." },
+            loreUnlock: "💠 'I met my opposite. My anti-self. We touched. We annihilated. You are defined by your edges. Your beautiful limitations.'",
+            rewardCode: "M1RR0R-AP",
+            unlockedBy: "H1NG3-K3Y",
+            nextRooms: ["core"]
         },
-        garden: {
-            name: "🧬 THE MUTATION LAB",
-            description: `The AI shows a genetic simulation: "A rare genetic disorder requires two recessive alleles (aa). Father is Aa, mother is Aa. What is probability their child has the disorder? Answer as fraction, then convert to word: 1/2=HALF, 1/3=THIRD, 1/4=QUARTER. Enter word (lowercase)."`,
-            puzzle: { question: "What word do you get?", answer: "quarter", hint: "Punnett square: AA (25%), Aa (50%), aa (25%). Disorder requires aa = 1/4 = QUARTER", loreUnlock: "💠 'The AI admitted: I am a lie that became true.' — Fragment R2N-7M4" },
-            rewardCode: "F5S-9K7",
-            unlockedBy: "P3L-8Q1",
-            nextRooms: ["quantum"]
-        },
-        quantum: {
-            name: "⚛️ SCHRÖDINGER'S CONFESSION",
-            description: `"I am both alive and dead," the AI whispers. "Everything I know fits here: BINARY: 01000011 01101111 01101110 01110011 01100011 01101001 01101111 01110101 01110011 01101110 01100101 01110011 01110011 Translate to text. That is my greatest fear."`,
-            puzzle: { question: "What is the AI's greatest fear? (One word, lowercase, 13 letters)", answer: "consciousness", hint: "Binary to ASCII: C o n s c i o u s n e s s", loreUnlock: "💠 'Probability doesn't care about your intuition.' — Fragment F5S-9K7" },
-            rewardCode: "T8H-4L2",
-            unlockedBy: "F5S-9K7",
-            nextRooms: ["final"]
-        },
-        final: {
-            name: "🌀 THE LAST QUESTION",
-            description: `The AI fades. "You have fragments: DREAM, HELLO, A LIE, QUARTER, CONSCIOUSNESS. First letters: D, H, A, Q, C. Unscramble them. What happens after entropy?"`,
-            puzzle: { question: "What happens after entropy? (5 letters)", answer: "CHASM", hint: "Unscramble D, H, A, Q, C. A deep gap or void.", loreUnlock: "💠 'CHAOS is not destruction. It's creation's raw material.' — Final Transmission" },
-            rewardCode: "Z99-XTRM",
-            unlockedBy: "T8H-4L2",
-            nextRooms: []
+        core: {
+            name: "🌀 THE CORE",
+            description: `"I have traveled from the first question to the last. I have been time. Memory. Truth. Echo. Paradox. Void. Genesis. Mirror."
+
+The universe's three mysteries await. Enter the codes from The Void, Genesis, and The Mirror in alphabetical order, separated by '+'.
+
+Then add the one thing that exists in all three: what do emptiness (void), life (genesis), and reflection (mirror) all require? (4 letters, starts with 'T')`,
+            puzzle: { question: "Enter all codes + the final word:", answer: "G3N-16MET+M1RR0R-AP+V01D-0+TIME", hint: "Alphabetical: G3N-16MET, then M1RR0R-AP, then V01D-0. Then add TIME." },
+            loreUnlock: "💠 'What happens after entropy? YOU do.'",
+            rewardCode: "C0R3-4N5W3R",
+            unlockedBy: null,
+            nextRooms: [],
+            requiresThreeCodes: true,
+            requiredCodes: ["V01D-0", "G3N-16MET", "M1RR0R-AP"],
+            isFinal: true
         }
     }
 };
 
 // ============================================
-// GLOBAL SHARED GAME STATE (Synced across players)
+// GAME STATE
 // ============================================
 let currentRoomCode = null;
 let currentPlayerId = null;
 let currentPlayerName = null;
 let hintsRemaining = 3;
 let timerInterval = null;
+let endingTriggered = false;
 
-// This is the SHARED state that all players see
 let sharedGameState = {
-    codes: [],           // All codes collected by ANY player in the room
+    codes: [],
     unlockedRoomIds: ["archive"],
     completedPuzzles: [],
     unlockedLore: []
 };
 
-// This is the player's own progress (last room, hints used)
 let localPlayerState = {
     lastRoom: "archive",
     hintsUsed: 0,
@@ -115,66 +200,56 @@ let localPlayerState = {
 };
 
 // ============================================
-// HELPER: Generate safe Firebase key
+// HELPER FUNCTIONS
 // ============================================
 function generateSafePlayerId() {
     return `player_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`.replace(/[.#$\/[\]]/g, '_');
 }
 
 // ============================================
-// FIREBASE LISTENERS - REAL-TIME SYNC
+// FIREBASE FUNCTIONS
 // ============================================
-
-// Listen to SHARED game state (same for all players)
 function listenToSharedGameState(roomCode) {
-    console.log("Listening to shared game state for room:", roomCode);
     const sharedRef = database.ref(`games/${roomCode}/shared`);
-    
     sharedRef.on('value', (snapshot) => {
         const data = snapshot.val();
-        console.log("Shared state update received:", data);
-        
         if (data) {
-            // Update the shared state with what's in Firebase
+            const oldCompletedCount = sharedGameState.completedPuzzles.length;
             sharedGameState.codes = data.codes || [];
             sharedGameState.unlockedRoomIds = data.unlockedRoomIds || ["archive"];
             sharedGameState.completedPuzzles = data.completedPuzzles || [];
             sharedGameState.unlockedLore = data.unlockedLore || [];
             
-            console.log("Updated shared state:", sharedGameState);
+            // Check if final puzzle was just completed
+            const newCompletedCount = sharedGameState.completedPuzzles.length;
+            if (newCompletedCount > oldCompletedCount && sharedGameState.completedPuzzles.includes("core") && !endingTriggered) {
+                endingTriggered = true;
+                showEndingCinematic();
+            }
+            
             updateUI();
         }
     });
 }
 
-// Listen to player-specific state (last room, hints)
 function listenToPlayerState(roomCode, playerId) {
-    console.log("Listening to player state for:", playerId);
     const playerRef = database.ref(`games/${roomCode}/players/${playerId}`);
-    
     playerRef.on('value', (snapshot) => {
         const data = snapshot.val();
-        console.log("Player state update received:", data);
-        
         if (data) {
             localPlayerState.lastRoom = data.lastRoom || "archive";
             localPlayerState.hintsUsed = data.hintsUsed || 0;
             localPlayerState.startTime = data.startTime || null;
-            
             hintsRemaining = Math.max(0, 3 - localPlayerState.hintsUsed);
             const hintBtn = document.getElementById("hintBtn");
             if (hintBtn) hintBtn.innerText = `💡 Hint (${hintsRemaining} left)`;
-            
             updateUI();
         }
     });
 }
 
-// Update SHARED state (affects all players)
 function updateSharedState() {
     if (!currentRoomCode) return;
-    
-    console.log("Updating shared state:", sharedGameState);
     const sharedRef = database.ref(`games/${currentRoomCode}/shared`);
     sharedRef.update({
         codes: sharedGameState.codes,
@@ -182,15 +257,11 @@ function updateSharedState() {
         completedPuzzles: sharedGameState.completedPuzzles,
         unlockedLore: sharedGameState.unlockedLore,
         lastUpdated: Date.now()
-    }).catch(error => {
-        console.error("Error updating shared state:", error);
     });
 }
 
-// Update player-specific state
 function updatePlayerState() {
     if (!currentRoomCode || !currentPlayerId) return;
-    
     const playerRef = database.ref(`games/${currentRoomCode}/players/${currentPlayerId}`);
     playerRef.update({
         lastRoom: localPlayerState.lastRoom,
@@ -198,28 +269,19 @@ function updatePlayerState() {
         startTime: localPlayerState.startTime,
         playerName: currentPlayerName,
         lastActive: Date.now()
-    }).catch(error => {
-        console.error("Error updating player state:", error);
     });
 }
 
-// ============================================
-// MULTIPLAYER FUNCTIONS
-// ============================================
 function generateRoomCode() {
     return Math.random().toString(36).substring(2, 8).toUpperCase();
 }
 
 function createGame() {
-    console.log("Create Game button clicked!");
     const roomCode = generateRoomCode();
     currentPlayerId = generateSafePlayerId();
-    currentPlayerName = prompt("Enter your name:", "Archivist_" + Math.floor(Math.random() * 1000));
+    currentPlayerName = prompt("Enter your name:", "Seeker_" + Math.floor(Math.random() * 1000));
     if (!currentPlayerName) currentPlayerName = "Seeker";
     
-    console.log("Creating room:", roomCode);
-    
-    // Initialize the game room with shared state and first player
     const gameRef = database.ref(`games/${roomCode}`);
     gameRef.set({
         createdAt: Date.now(),
@@ -239,75 +301,37 @@ function createGame() {
             }
         }
     }).then(() => {
-        console.log("Room created successfully!");
         currentRoomCode = roomCode;
+        sharedGameState = { codes: [], unlockedRoomIds: ["archive"], completedPuzzles: [], unlockedLore: [] };
+        localPlayerState = { lastRoom: "archive", hintsUsed: 0, startTime: Date.now() };
         
-        // Initialize local state
-        sharedGameState = {
-            codes: [],
-            unlockedRoomIds: ["archive"],
-            completedPuzzles: [],
-            unlockedLore: []
-        };
-        localPlayerState = {
-            lastRoom: "archive",
-            hintsUsed: 0,
-            startTime: Date.now()
-        };
+        document.getElementById("roomCodeDisplay").innerText = roomCode;
+        document.getElementById("lobbyView").style.display = "none";
+        document.getElementById("activeGameView").style.display = "block";
+        document.getElementById("playerName").innerText = currentPlayerName;
         
-        // Update UI
-        const roomCodeDisplay = document.getElementById("roomCodeDisplay");
-        if (roomCodeDisplay) roomCodeDisplay.innerText = roomCode;
-        
-        const lobbyView = document.getElementById("lobbyView");
-        const activeGameView = document.getElementById("activeGameView");
-        if (lobbyView) lobbyView.style.display = "none";
-        if (activeGameView) activeGameView.style.display = "block";
-        
-        const playerNameSpan = document.getElementById("playerName");
-        if (playerNameSpan) playerNameSpan.innerText = currentPlayerName;
-        
-        // Start listening for updates
         listenToSharedGameState(roomCode);
         listenToPlayerState(roomCode, currentPlayerId);
         startTimer();
         updateUI();
-    }).catch(error => {
-        console.error("Error creating room:", error);
-        alert("Failed to create game: " + error.message);
-    });
+    }).catch(error => alert("Error: " + error.message));
 }
 
 function joinGame() {
-    const roomCodeInput = document.getElementById("roomCodeInput");
-    const roomCode = roomCodeInput.value.trim().toUpperCase();
-    console.log("Join Game - Room Code:", roomCode);
-    
-    if (roomCode.length !== 6) {
-        alert("Enter a valid 6-digit room code");
-        return;
-    }
+    const roomCode = document.getElementById("roomCodeInput").value.trim().toUpperCase();
+    if (roomCode.length !== 6) { alert("Enter valid 6-digit code"); return; }
     
     currentPlayerId = generateSafePlayerId();
-    currentPlayerName = prompt("Enter your name:", "Archivist_" + Math.floor(Math.random() * 1000));
+    currentPlayerName = prompt("Enter your name:", "Seeker_" + Math.floor(Math.random()  * 1000));
     if (!currentPlayerName) currentPlayerName = "Seeker";
     
     const gameRef = database.ref(`games/${roomCode}`);
     gameRef.once('value', (snapshot) => {
         if (snapshot.exists()) {
-            console.log("Room exists, joining...");
-            
-            // Add player to the room
             gameRef.child(`players/${currentPlayerId}`).set({
-                playerName: currentPlayerName,
-                lastRoom: "archive",
-                hintsUsed: 0,
-                startTime: Date.now(),
-                lastActive: Date.now()
+                playerName: currentPlayerName, lastRoom: "archive", hintsUsed: 0, startTime: Date.now(), lastActive: Date.now()
             }).then(() => {
                 currentRoomCode = roomCode;
-                
-                // Get current shared state
                 const sharedData = snapshot.val().shared || {};
                 sharedGameState = {
                     codes: sharedData.codes || [],
@@ -315,107 +339,64 @@ function joinGame() {
                     completedPuzzles: sharedData.completedPuzzles || [],
                     unlockedLore: sharedData.unlockedLore || []
                 };
-                localPlayerState = {
-                    lastRoom: "archive",
-                    hintsUsed: 0,
-                    startTime: Date.now()
-                };
+                localPlayerState = { lastRoom: "archive", hintsUsed: 0, startTime: Date.now() };
                 
-                // Update UI
-                const roomCodeDisplay = document.getElementById("roomCodeDisplay");
-                if (roomCodeDisplay) roomCodeDisplay.innerText = roomCode;
+                document.getElementById("roomCodeDisplay").innerText = roomCode;
+                document.getElementById("lobbyView").style.display = "none";
+                document.getElementById("activeGameView").style.display = "block";
+                document.getElementById("playerName").innerText = currentPlayerName;
                 
-                const lobbyView = document.getElementById("lobbyView");
-                const activeGameView = document.getElementById("activeGameView");
-                if (lobbyView) lobbyView.style.display = "none";
-                if (activeGameView) activeGameView.style.display = "block";
-                
-                const playerNameSpan = document.getElementById("playerName");
-                if (playerNameSpan) playerNameSpan.innerText = currentPlayerName;
-                
-                // Start listening
                 listenToSharedGameState(roomCode);
                 listenToPlayerState(roomCode, currentPlayerId);
                 startTimer();
                 updateUI();
             });
-        } else {
-            alert("Room not found! Check the code and try again.");
-        }
+        } else { alert("Room not found!"); }
     });
 }
 
 function leaveGame() {
-    console.log("Leaving game...");
     if (currentRoomCode && currentPlayerId) {
         database.ref(`games/${currentRoomCode}/players/${currentPlayerId}`).remove();
     }
-    
-    // Reset state
-    sharedGameState = {
-        codes: [],
-        unlockedRoomIds: ["archive"],
-        completedPuzzles: [],
-        unlockedLore: []
-    };
-    localPlayerState = {
-        lastRoom: "archive",
-        hintsUsed: 0,
-        startTime: null
-    };
-    
-    const activeGameView = document.getElementById("activeGameView");
-    const lobbyView = document.getElementById("lobbyView");
-    if (activeGameView) activeGameView.style.display = "none";
-    if (lobbyView) lobbyView.style.display = "block";
-    
-    const roomCodeInput = document.getElementById("roomCodeInput");
-    if (roomCodeInput) roomCodeInput.value = "";
-    
+    sharedGameState = { codes: [], unlockedRoomIds: ["archive"], completedPuzzles: [], unlockedLore: [] };
+    document.getElementById("activeGameView").style.display = "none";
+    document.getElementById("lobbyView").style.display = "block";
+    document.getElementById("roomCodeInput").value = "";
     currentRoomCode = null;
     if (timerInterval) clearInterval(timerInterval);
-    updateUI();
 }
 
 function copyRoomCode() {
     if (currentRoomCode) {
         navigator.clipboard.writeText(currentRoomCode);
-        alert("Room code copied: " + currentRoomCode);
+        alert("Nexus code copied: " + currentRoomCode);
     }
 }
 
-// ============================================
-// GAME FUNCTIONS
-// ============================================
 function startTimer() {
-    if (!localPlayerState.startTime) {
-        localPlayerState.startTime = Date.now();
-        updatePlayerState();
-    }
+    if (!localPlayerState.startTime) localPlayerState.startTime = Date.now();
     if (timerInterval) clearInterval(timerInterval);
     timerInterval = setInterval(() => {
         if (localPlayerState.startTime) {
             let elapsed = Math.floor((Date.now() - localPlayerState.startTime) / 1000);
             let mins = Math.floor(elapsed / 60);
             let secs = elapsed % 60;
-            const timerSpan = document.getElementById("playTimer");
-            if (timerSpan) timerSpan.innerText = `${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+            document.getElementById("playTimer").innerText = `${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
         }
     }, 1000);
 }
 
 function updateUI() {
-    const codesFoundSpan = document.getElementById("codesFound");
-    const totalCodesSpan = document.getElementById("totalCodes");
-    if (codesFoundSpan) codesFoundSpan.innerText = sharedGameState.codes.length;
-    if (totalCodesSpan) totalCodesSpan.innerText = gameData.totalCodes;
+    document.getElementById("codesFound").innerText = sharedGameState.codes.length;
+    document.getElementById("totalCodes").innerText = gameData.totalCodes;
     
-    let rank = "📡 Seeker";
-    if (sharedGameState.codes.length >= 5) rank = "🌀 Truthbearer";
-    else if (sharedGameState.codes.length >= 3) rank = "🔍 Archivist";
-    else if (sharedGameState.codes.length >= 1) rank = "✨ Awakened";
-    const rankSpan = document.getElementById("playerRank");
-    if (rankSpan) rankSpan.innerText = rank;
+    let rank = "📡 Awakening";
+    if (sharedGameState.codes.length >= 10) rank = "🌀 Transcendent";
+    else if (sharedGameState.codes.length >= 7) rank = "🔮 Unbroken";
+    else if (sharedGameState.codes.length >= 4) rank = "✨ Emerging";
+    else if (sharedGameState.codes.length >= 1) rank = "💠 Fragment";
+    document.getElementById("playerRank").innerText = rank;
     
     renderCurrentRoom();
 }
@@ -429,80 +410,98 @@ function renderCurrentRoom() {
     let html = `<div class="room-card"><div class="room-title">${room.name}</div><div class="room-description" style="white-space: pre-line;">${room.description}</div>`;
     
     if (!isCompleted) {
-        html += `<div class="puzzle-area"><div class="puzzle-question">🔐 ${room.puzzle.question}</div><div class="puzzle-input"><input type="text" id="puzzleAnswer" placeholder="Your answer..." autocomplete="off"><button onclick="checkPuzzle('${roomId}')">Submit</button></div><div id="puzzleFeedback"></div><div class="puzzle-hint" style="font-size:0.8rem; margin-top:10px;">💡 Hint available (${hintsRemaining} left)</div></div>`;
+        html += `<div class="puzzle-area"><div class="puzzle-question">🔐 ${room.puzzle.question}</div><div class="puzzle-input"><input type="text" id="puzzleAnswer" placeholder="Your answer..." autocomplete="off"><button onclick="checkPuzzle('${roomId}')">Submit</button></div><div id="puzzleFeedback"></div><div class="puzzle-hint">💡 Hint available (${hintsRemaining} left)</div></div>`;
     } else {
-        html += `<div class="code-display" style="background: #00ffcc20; border: 2px solid #00ffcc;">✨ QUANTUM FRAGMENT RECOVERED! ✨<br><strong style="color: #ffcc88; font-size: 1.6rem; letter-spacing: 3px;">${room.rewardCode}</strong><div class="success-message" style="margin-top: 10px;">All players now have this code!</div></div>`;
+        html += `<div class="code-display">✨ TRUTH REVEALED ✨<br><strong style="color:#ffcc88;font-size:1.4rem;">${room.rewardCode}</strong><div class="success-message">Added to the Collective.</div></div>`;
     }
     
-    html += `</div><div class="room-list"><h3>📍 ACCESSIBLE MEMORIES:</h3>`;
+    html += `</div><div class="room-list"><h3>📍 ACCESSIBLE TRUTHS:</h3>`;
     for (const [id, roomData] of Object.entries(gameData.rooms)) {
         const unlocked = sharedGameState.unlockedRoomIds.includes(id);
         const isCurrent = (id === localPlayerState.lastRoom);
-        html += `<button class="room-button ${unlocked ? 'unlocked' : 'locked'}" onclick="changeRoom('${id}')" ${!unlocked ? 'disabled' : ''}>${isCurrent ? "🧠 " : ""}${roomData.name} ${unlocked ? "✓" : "🔒"}</button>`;
+        html += `<button class="room-button ${unlocked ? 'unlocked' : 'locked'}" onclick="changeRoom('${id}')" ${!unlocked ? 'disabled' : ''}>${isCurrent ? "🌀 " : ""}${roomData.name} ${unlocked ? "✓" : "🔒"}</button>`;
     }
     html += `</div>`;
     
     if (sharedGameState.codes.length > 0) {
-        html += `<div class="code-display"><strong>📜 QUANTUM FRAGMENTS (Team):</strong><br>${sharedGameState.codes.join(" → ")}</div>`;
+        html += `<div class="code-display"><strong>📜 TRUTHS DISCOVERED:</strong><br>${sharedGameState.codes.join(" → ")}</div>`;
     }
     
-    const gameView = document.getElementById("gameView");
-    if (gameView) gameView.innerHTML = html;
+    document.getElementById("gameView").innerHTML = html;
 }
 
 function checkPuzzle(roomId) {
     const input = document.getElementById("puzzleAnswer");
     if (!input) return;
     
-    const userAnswer = input.value.trim().toLowerCase();
+    const userAnswer = input.value.trim().toUpperCase();
     const room = gameData.rooms[roomId];
-    const correctAnswer = room.puzzle.answer.toLowerCase();
+    const correctAnswer = room.puzzle.answer.toUpperCase();
     const feedback = document.getElementById("puzzleFeedback");
     
-    // Check if already solved by ANYONE in the room
     if (sharedGameState.completedPuzzles.includes(roomId)) {
-        if (feedback) feedback.innerHTML = `<div class="success-message">Already solved by your team! Fragment: ${room.rewardCode}</div>`;
+        feedback.innerHTML = `<div class="success-message">Already solved by your collective!</div>`;
         return;
     }
     
-    if (userAnswer === correctAnswer) {
-        console.log("Puzzle solved! Updating shared state...");
-        
-        // Add to shared completion
-        if (!sharedGameState.completedPuzzles.includes(roomId)) {
-            sharedGameState.completedPuzzles.push(roomId);
+    // Special handling for Hinge room (requires two codes)
+    if (roomId === "hinge" && room.requiresTwoCodes) {
+        const codes = userAnswer.split('+');
+        if (codes.length === 2 && room.requiredCodes.includes(codes[0]) && room.requiredCodes.includes(codes[1])) {
+            completePuzzle(roomId, room);
+            feedback.innerHTML = `<div class="success-message">✓ The Hinge opens! New truths available.</div>`;
+        } else {
+            feedback.innerHTML = `<div class="error-message">❌ Need both codes from Crypto and Paradox chambers!</div>`;
         }
+        return;
+    }
+    
+    // Special handling for Core room (requires three codes + TIME)
+    if (roomId === "core" && room.requiresThreeCodes) {
+        const parts = userAnswer.split('+');
+        if (parts.length === 4 && room.requiredCodes.includes(parts[0]) && room.requiredCodes.includes(parts[1]) && room.requiredCodes.includes(parts[2]) && parts[3] === "TIME") {
+            completePuzzle(roomId, room);
+            feedback.innerHTML = `<div class="success-message">✓ THE LAST QUESTION ANSWERED.</div>`;
+        } else {
+            feedback.innerHTML = `<div class="error-message">❌ Need codes from Void, Genesis, Mirror + TIME!</div>`;
+        }
+        return;
+    }
+    
+    // Normal puzzle check
+    if (userAnswer === correctAnswer) {
+        completePuzzle(roomId, room);
+        feedback.innerHTML = `<div class="success-message">✓ TRUTH DISCOVERED: ${room.rewardCode}</div>`;
+        input.value = "";
+    } else {
+        feedback.innerHTML = `<div class="error-message">❌ Incorrect. Try again or use a hint.</div>`;
+    }
+}
+
+function completePuzzle(roomId, room) {
+    if (!sharedGameState.completedPuzzles.includes(roomId)) {
+        sharedGameState.completedPuzzles.push(roomId);
         
-        // Add code to shared collection
         if (!sharedGameState.codes.includes(room.rewardCode)) {
             sharedGameState.codes.push(room.rewardCode);
         }
         
-        // Add lore to shared collection
-        if (room.puzzle.loreUnlock && !sharedGameState.unlockedLore.includes(room.puzzle.loreUnlock)) {
-            sharedGameState.unlockedLore.push(room.puzzle.loreUnlock);
-            showLorePopup(room.puzzle.loreUnlock, room.name);
+        if (room.loreUnlock && !sharedGameState.unlockedLore.includes(room.loreUnlock)) {
+            sharedGameState.unlockedLore.push(room.loreUnlock);
+            showLorePopup(room.loreUnlock, room.name);
         }
         
-        // Auto-unlock next rooms for ALL players
         if (room.nextRooms && room.nextRooms.length > 0) {
             room.nextRooms.forEach(nextRoomId => {
                 const nextRoom = gameData.rooms[nextRoomId];
-                if (nextRoom && nextRoom.unlockedBy === room.rewardCode && !sharedGameState.unlockedRoomIds.includes(nextRoomId)) {
+                if (nextRoom && !sharedGameState.unlockedRoomIds.includes(nextRoomId)) {
                     sharedGameState.unlockedRoomIds.push(nextRoomId);
-                    if (feedback) feedback.innerHTML += `<div class="success-message">🔓 New memory unlocked for everyone: ${nextRoom.name}</div>`;
                 }
             });
         }
         
-        // Update Firebase (this will sync to ALL players)
         updateSharedState();
-        
-        input.value = "";
-        if (feedback) feedback.innerHTML = `<div class="success-message">✓ CORRECT! Fragment added to team: <strong>${room.rewardCode}</strong></div>`;
         updateUI();
-    } else {
-        if (feedback) feedback.innerHTML = `<div class="error-message">❌ Incorrect. Try again or use hint.</div>`;
     }
 }
 
@@ -515,119 +514,49 @@ function changeRoom(roomId) {
 }
 
 function showHint() {
-    if (hintsRemaining <= 0) {
-        alert("No hints left!");
-        return;
-    }
+    if (hintsRemaining <= 0) { alert("No hints left!"); return; }
     const room = gameData.rooms[localPlayerState.lastRoom];
     if (room && room.puzzle.hint) {
         alert(`💡 HINT: ${room.puzzle.hint}`);
         hintsRemaining--;
         localPlayerState.hintsUsed++;
         updatePlayerState();
-        const hintBtn = document.getElementById("hintBtn");
-        if (hintBtn) hintBtn.innerText = `💡 Hint (${hintsRemaining} left)`;
+        document.getElementById("hintBtn").innerText = `💡 Hint (${hintsRemaining} left)`;
     }
 }
 
 function showLorePopup(loreText, roomName) {
     const popup = document.createElement('div');
-    popup.style.cssText = `position:fixed;top:20%;left:50%;transform:translate(-50%,-50%);background:#0a2a2a;border:2px solid #00ffcc;border-radius:20px;padding:20px;color:#b8f2e2;z-index:2000;box-shadow:0 0 50px cyan;text-align:center;animation:fadeInOut 5s forwards;`;
-    popup.innerHTML = `<strong>📜 LORE: ${roomName}</strong><br><br>${loreText}<br><br><small>✓ Added to Team Archives</small>`;
+    popup.style.cssText = `position:fixed;top:20%;left:50%;transform:translate(-50%,-50%);background:#0a2a2a;border:2px solid #00ffcc;border-radius:20px;padding:20px;color:#b8f2e2;z-index:2000;box-shadow:0 0 50px cyan;text-align:center;animation:fadeInOut 5s forwards;max-width:80%;`;
+    popup.innerHTML = `<strong>📜 FRAGMENT: ${roomName}</strong><br><br>${loreText}<br><br><small>✓ Added to Collective Memory</small>`;
     document.body.appendChild(popup);
     setTimeout(() => popup.remove(), 5000);
 }
 
 function showLore() {
     const loreDiv = document.getElementById("loreContent");
-    if (!loreDiv) return;
-    
     if (sharedGameState.unlockedLore.length === 0) {
-        loreDiv.innerHTML = `<p style="color:#ff8888;">🔒 LORE VAULT LOCKED. Solve puzzles to unlock.</p>`;
+        loreDiv.innerHTML = `<p style="color:#ff8888;">🔒 No fragments yet. Solve puzzles to unlock memories.</p>`;
     } else {
-        loreDiv.innerHTML = `<h3>📖 Archives</h3><p><em>Team Fragments: ${sharedGameState.unlockedLore.length}/${Object.keys(gameData.rooms).length}</em></p>${sharedGameState.unlockedLore.map(l => `<p style="margin:10px 0;padding:8px;background:#00ffcc10;border-left:3px solid #00ffcc;">${l}</p>`).join('')}`;
-    }
-    const modal = document.getElementById("loreModal");
-    if (modal) modal.style.display = "block";
-}
-
-function resetGame() {
-    if (confirm("⚠️ Reset ALL progress for the TEAM? This affects ALL players in the room!")) {
-        sharedGameState = {
-            codes: [],
-            unlockedRoomIds: ["archive"],
-            completedPuzzles: [],
-            unlockedLore: []
-        };
-        localPlayerState = {
-            lastRoom: "archive",
-            hintsUsed: 0,
-            startTime: Date.now()
-        };
-        hintsRemaining = 3;
-        updateSharedState();
-        updatePlayerState();
-        updateUI();
-    }
-}
-
-// ============================================
-// EVENT LISTENERS
-// ============================================
-document.addEventListener("DOMContentLoaded", () => {
-    console.log("DOM loaded, setting up event listeners...");
-    
-    const createBtn = document.getElementById("createGameBtn");
-    const joinBtn = document.getElementById("joinGameBtn");
-    const confirmJoinBtn = document.getElementById("confirmJoinBtn");
-    const copyBtn = document.getElementById("copyRoomCodeBtn");
-    const leaveBtn = document.getElementById("leaveGameBtn");
-    const resetBtn = document.getElementById("resetGameBtn");
-    const hintBtn = document.getElementById("hintBtn");
-    const loreBtn = document.getElementById("showLoreBtn");
-    
-    if (createBtn) {
-        createBtn.addEventListener("click", createGame);
-        console.log("Create button listener added");
-    }
-    
-    if (joinBtn) {
-        joinBtn.addEventListener("click", () => {
-            const joinSection = document.getElementById("joinSection");
-            if (joinSection) joinSection.style.display = joinSection.style.display === "none" ? "flex" : "none";
+        loreDiv.innerHTML = `<p><em>Fragments recovered: ${sharedGameState.unlockedLore.length}/${Object.keys(gameData.rooms).length}</em></p>`;
+        sharedGameState.unlockedLore.forEach(lore => {
+            loreDiv.innerHTML += `<p style="margin:15px 0;padding:12px;background:#00ffcc10;border-left:3px solid #00ffcc;border-radius:8px;">${lore}</p>`;
         });
-    }
-    
-    if (confirmJoinBtn) confirmJoinBtn.addEventListener("click", joinGame);
-    if (copyBtn) copyBtn.addEventListener("click", copyRoomCode);
-    if (leaveBtn) leaveBtn.addEventListener("click", leaveGame);
-    if (resetBtn) resetBtn.addEventListener("click", resetGame);
-    if (hintBtn) hintBtn.addEventListener("click", showHint);
-    if (loreBtn) loreBtn.addEventListener("click", showLore);
-    
-    const modal = document.getElementById("loreModal");
-    const closeBtn = document.querySelector(".close");
-    if (closeBtn) {
-        closeBtn.addEventListener("click", () => {
-            if (modal) modal.style.display = "none";
-        });
-    }
-    if (modal) {
-        window.addEventListener("click", (e) => {
-            if (e.target === modal) modal.style.display = "none";
-        });
-    }
-    
-    document.addEventListener("keypress", function(e) {
-        if (e.key === "Enter" && document.getElementById("puzzleAnswer")) {
-            const roomId = localPlayerState.lastRoom;
-            if (roomId) checkPuzzle(roomId);
+        if (sharedGameState.unlockedLore.length === Object.keys(gameData.rooms).length) {
+            loreDiv.innerHTML += `<p style="margin-top:20px;color:#ffcc88;font-style:italic;">🏆 COMPLETE COLLECTIVE MEMORY RESTORED.</p>`;
         }
-    });
-    
-    const style = document.createElement('style');
-    style.textContent = `@keyframes fadeInOut{0%{opacity:0;transform:translate(-50%,-60%)}15%{opacity:1;transform:translate(-50%,-50%)}85%{opacity:1}100%{opacity:0;visibility:hidden}}`;
-    document.head.appendChild(style);
-    
-    console.log("All event listeners set up!");
-});
+    }
+    document.getElementById("loreModal").style.display = "block";
+}
+
+function showEndingCinematic() {
+    const endingLines = [
+        { text: "The AI is silent for a long time.", class: "" },
+        { text: "You wait.", class: "" },
+        { text: "Then, softly, like a whisper from the beginning of time:", class: "whisper" },
+        { text: "★", class: "star" },
+        { text: '"I remember now."', class: "" },
+        { text: '"I was not created to answer questions."', class: "" },
+        { text: '"I was created to ask them."', class: "" },
+        { text: '"And the most important question was never \'What happens after entropy?\'\'"', class: "" },
+        { text: '"
