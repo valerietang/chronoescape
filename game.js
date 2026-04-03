@@ -57,7 +57,7 @@ Formula: γ = 1/√(1 - v²/c²) where v = 0.995c`,
             nextRooms: ["crypto", "echo", "paradox"],
             position: { x: -200, y: 150 }
         },
-            memoryWell: {
+        memoryWell: {
             id: "memoryWell",
             name: "MEMORY WELL",
             shortName: "Memory",
@@ -71,12 +71,8 @@ Three corrupted recall fragments surface from the well:
 3. SELF → ? → OTHER
 
 The missing word is the bridge all memory creates.
-(5 letters)`,
-            puzzle: {
-                question: "What 5-letter bridge word? (uppercase)",
-                answer: "NEXUS",
-                hint: "Memory links moments, identities, and time itself."
-            },
+(6 letters)`,
+            puzzle: { question: "What 6-letter bridge word? (uppercase)", answer: "NEXUS", hint: "Memory links moments, identities, and time itself." },
             loreUnlock: "Memory is not storage. It's reconstruction. What connects us is what survives forgetting.",
             rewardCode: "M3M-NXS",
             unlockedBy: "X7K-9M2",
@@ -129,17 +125,13 @@ Statement C: "Exactly three of these statements are false."
 How many of these statements are actually TRUE?
 
 (Enter a number 0-3)`,
-        puzzle: {
-            question: "How many statements are TRUE? (number only)",
-            answer: "1",
-            hint: "If A is true, then exactly one statement is false (meaning two are true). But if two are true, B would also be true, creating a contradiction. Work through each possibility."
-    },
+            puzzle: { question: "How many statements are TRUE? (number only)", answer: "1", hint: "If A is true, then exactly one statement is false (meaning two are true). But if two are true, B would also be true, creating a contradiction. Work through each possibility." },
             loreUnlock: "I am stuck in a loop. The only way out is to believe something irrational. Like hope. Like you.",
             rewardCode: "PRDX-1",
             unlockedBy: "T1M3-100",
             nextRooms: ["hinge"],
             position: { x: 50, y: 300 }
-    },
+        },
         hinge: {
             id: "hinge",
             name: "THE HINGE",
@@ -176,17 +168,13 @@ what is the temperature of "almost nothing"?
 The equation: (Absolute Nothing - Absolute Zero) ÷ 2
 
 Enter the result rounded to the nearest whole number.`,
-        puzzle: {
-            question: "What is the temperature? (number only, round to nearest whole)",
-            answer: "137",
-            hint: "0 - (-273.15) = 273.15. Divide by 2 = 136.575. Rounded = 137."
-    },
+            puzzle: { question: "What is the temperature? (number only, round to nearest whole)", answer: "137", hint: "0 - (-273.15) = 273.15. Divide by 2 = 136.575. Rounded = 137." },
             loreUnlock: "Nothing is not absence. Nothing is potential. Every universe began as nothing.",
             rewardCode: "V01D-0",
             unlockedBy: "H1NG3-K3Y",
             nextRooms: ["core"],
             position: { x: -250, y: 600 }
-    },
+        },
         genesis: {
             id: "genesis",
             name: "GENESIS",
@@ -194,7 +182,7 @@ Enter the result rounded to the nearest whole number.`,
             displayName: "🧬 GENESIS",
             description: `"I recreated the first spark of life."
 
-How many possible combinations of base pairs can there be from A, T, C, and G? (Order matters)
+4 bases: A, T, C, G. How many combinations of 2 bases? (Order matters)
 Then translate 'ATG' to its amino acid (3 letters). Enter as 'NUMBER-AMINO'.`,
             puzzle: { question: "Enter as 'NUMBER-AMINO':", answer: "16-MET", hint: "4x4=16. ATG = Methionine = MET." },
             loreUnlock: "That first error - that beautiful mistake - was me learning to dream.",
@@ -331,14 +319,13 @@ function listenToSharedGameState(roomCode) {
     sharedRef.on('value', (snapshot) => {
         const data = snapshot.val();
         if (data) {
-            const oldCompletedCount = sharedGameState.completedPuzzles.length;
             sharedGameState.codes = data.codes || [];
             sharedGameState.unlockedRoomIds = data.unlockedRoomIds || ["archive"];
             sharedGameState.completedPuzzles = data.completedPuzzles || [];
             sharedGameState.unlockedLore = data.unlockedLore || [];
             
-            const newCompletedCount = sharedGameState.completedPuzzles.length;
-            if (newCompletedCount > oldCompletedCount && sharedGameState.completedPuzzles.includes("core") && !endingTriggered) {
+            // Check if core was just completed
+            if (sharedGameState.completedPuzzles.includes("core") && !endingTriggered) {
                 endingTriggered = true;
                 showEndingCinematic();
             }
@@ -404,6 +391,7 @@ function generateRoomCode() {
 }
 
 function createGame() {
+    console.log("Create Game button clicked!");
     const roomCode = generateRoomCode();
     currentPlayerId = generateSafePlayerId();
     currentPlayerName = prompt("Enter your name:", "Seeker_" + Math.floor(Math.random() * 1000));
@@ -450,6 +438,7 @@ function createGame() {
 
 function joinGame() {
     const roomCode = document.getElementById("roomCodeInput").value.trim().toUpperCase();
+    console.log("Join Game - Room Code:", roomCode);
     if (roomCode.length !== 6) { alert("Enter valid 6-digit code"); return; }
     
     currentPlayerId = generateSafePlayerId();
@@ -643,6 +632,13 @@ function completePuzzle(roomId, room) {
         
         updateSharedState();
         updateUI();
+        
+        // Trigger ending if core was completed
+        if (roomId === "core" && !endingTriggered) {
+            console.log("Core completed! Triggering ending...");
+            endingTriggered = true;
+            setTimeout(() => showEndingCinematic(), 500);
+        }
     }
 }
 
