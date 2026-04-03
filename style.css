@@ -593,3 +593,297 @@ footer {
 .scroll-top:hover {
     opacity: 1;
 }
+
+/* ============================================
+   MOBILE-FRIENDLY FLOWCHART
+   ============================================ */
+.flowchart-section {
+    margin-top: 30px;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 20px;
+    border: 1px solid #00ffcc33;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.flowchart-section h3 {
+    margin-bottom: 15px;
+    color: #ffcc88;
+    text-align: center;
+    font-size: 1rem;
+}
+
+.flowchart {
+    position: relative;
+    min-width: 900px;
+    min-height: 850px;
+    overflow: visible;
+}
+
+/* Make flowchart nodes slightly smaller on mobile */
+@media (max-width: 700px) {
+    .flowchart-section {
+        padding: 10px;
+    }
+    
+    .flowchart {
+        min-width: 800px;
+        transform: scale(0.9);
+        transform-origin: top left;
+    }
+    
+    .flowchart-node {
+        width: 65px;
+        height: 65px;
+    }
+    
+    .node-icon {
+        font-size: 1.2rem;
+    }
+    
+    .node-name {
+        font-size: 0.6rem;
+    }
+}
+
+/* ============================================
+   MOBILE-FRIENDLY MODAL (Lore & Ending)
+   ============================================ */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(5px);
+    overflow-y: auto;
+}
+
+.modal-content {
+    background: #07161f;
+    margin: 10% auto;
+    padding: 20px;
+    border: 2px solid cyan;
+    width: 90%;
+    max-width: 600px;
+    border-radius: 20px;
+    color: #bbffdd;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+/* Mobile modal adjustments */
+@media (max-width: 700px) {
+    .modal-content {
+        margin: 5% auto;
+        width: 95%;
+        padding: 15px;
+        max-height: 85vh;
+    }
+    
+    .modal-content h2 {
+        font-size: 1.3rem;
+        margin-right: 30px;
+    }
+    
+    .close {
+        font-size: 28px;
+        position: absolute;
+        top: 10px;
+        right: 15px;
+    }
+}
+
+/* Ending modal specific */
+.ending-modal .modal-content {
+    background: #000000;
+    border: 2px solid #ffcc88;
+    max-width: 700px;
+    text-align: center;
+}
+
+.ending-text {
+    font-family: 'Courier New', monospace;
+    color: #ffeedd;
+    font-size: 1rem;
+    line-height: 1.6;
+    padding: 15px;
+}
+
+@media (max-width: 700px) {
+    .ending-text {
+        font-size: 0.85rem;
+        line-height: 1.5;
+        padding: 10px;
+    }
+    
+    .ending-text .star {
+        font-size: 1.5rem;
+    }
+    
+    .ending-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .ending-buttons button {
+        width: 100%;
+        padding: 10px;
+    }
+}
+
+/* ============================================
+   SCROLLABLE LORE CONTENT
+   ============================================ */
+#loreContent {
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+#loreContent p {
+    margin: 12px 0;
+    padding: 10px;
+    background: #00ffcc10;
+    border-left: 3px solid #00ffcc;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    word-wrap: break-word;
+}
+
+@media (max-width: 700px) {
+    #loreContent p {
+        font-size: 0.8rem;
+        padding: 8px;
+    }
+}
+
+/* ============================================
+   CODE ENTRIES - Prevent overflow
+   ============================================ */
+.code-entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 12px;
+    margin: 5px 0;
+    background: #00ffcc10;
+    border-radius: 8px;
+    border-left: 3px solid #00ffcc;
+}
+
+.code-room {
+    font-size: 0.8rem;
+    color: #ffcc88;
+    word-break: keep-all;
+}
+
+.code-value {
+    font-family: monospace;
+    font-weight: bold;
+    letter-spacing: 1px;
+    word-break: break-all;
+}
+
+@media (max-width: 700px) {
+    .code-entry {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+/* ============================================
+   ROOM CARDS - Mobile padding
+   ============================================ */
+@media (max-width: 700px) {
+    .room-card {
+        padding: 15px;
+    }
+    
+    .room-title {
+        font-size: 1.2rem;
+    }
+    
+    .room-description {
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+    
+    .puzzle-area {
+        padding: 12px;
+    }
+    
+    .puzzle-question {
+        font-size: 0.9rem;
+    }
+    
+    .puzzle-input input {
+        font-size: 0.9rem;
+        padding: 10px;
+    }
+    
+    .puzzle-input button {
+        padding: 10px 16px;
+        font-size: 0.9rem;
+    }
+}
+
+/* ============================================
+   FADE IN/OUT ANIMATION (for popups)
+   ============================================ */
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translate(-50%, -60%); }
+    15% { opacity: 1; transform: translate(-50%, -50%); }
+    85% { opacity: 1; transform: translate(-50%, -50%); }
+    100% { opacity: 0; visibility: hidden; }
+}
+
+@keyframes fadeInText {
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.ending-line {
+    animation: fadeInText 0.8s ease-out forwards;
+    opacity: 0;
+    margin-bottom: 15px;
+}
+
+.ending-line:nth-child(1) { animation-delay: 0s; }
+.ending-line:nth-child(2) { animation-delay: 0.5s; }
+.ending-line:nth-child(3) { animation-delay: 1s; }
+.ending-line:nth-child(4) { animation-delay: 1.5s; }
+.ending-line:nth-child(5) { animation-delay: 2s; }
+.ending-line:nth-child(6) { animation-delay: 2.5s; }
+.ending-line:nth-child(7) { animation-delay: 3s; }
+.ending-line:nth-child(8) { animation-delay: 3.5s; }
+.ending-line:nth-child(9) { animation-delay: 4s; }
+.ending-line:nth-child(10) { animation-delay: 4.5s; }
+.ending-line:nth-child(11) { animation-delay: 5s; }
+.ending-line:nth-child(12) { animation-delay: 5.5s; }
+.ending-line:nth-child(13) { animation-delay: 6s; }
+.ending-line:nth-child(14) { animation-delay: 6.5s; }
+.ending-line:nth-child(15) { animation-delay: 7s; }
+
+.star {
+    color: #ffcc88;
+    font-size: 2rem;
+    margin: 20px 0;
+    animation: pulse 2s infinite;
+}
+
+.whisper {
+    color: #88aaff;
+    font-style: italic;
+}
