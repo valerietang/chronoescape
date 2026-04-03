@@ -1,10 +1,19 @@
+// ██████████████████████████████████████████████████████████████████████████
+//                      THE LAST QUESTION v4.3
+//              Quantum Collective - FULLY FIXED
+// ██████████████████████████████████████████████████████████████████████████
+
+// ============================================
+// REPLACE THIS WITH YOUR FIREBASE CONFIG
+// ============================================
 const firebaseConfig = {
-    apiKey: "AIzaSyA2ZgFjcWpQfQEt4960csO0pCU3jyLpXZc",
-    authDomain: "chrono-escape-v2.firebaseapp.com",
-    projectId: "chrono-escape-v2",
-    storageBucket: "chrono-escape-v2.firebasestorage.app",
-    messagingSenderId: "131420121282",
-    appId: "1:131420121282:web:7dbce4e95f96241cef735b"
+    apiKey: "YOUR_API_KEY_HERE",
+    authDomain: "YOUR_AUTH_DOMAIN_HERE",
+    databaseURL: "YOUR_DATABASE_URL_HERE",
+    projectId: "YOUR_PROJECT_ID_HERE",
+    storageBucket: "YOUR_STORAGE_BUCKET_HERE",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID_HERE",
+    appId: "YOUR_APP_ID_HERE"
 };
 
 // Initialize Firebase
@@ -27,6 +36,7 @@ const gameData = {
             id: "archive",
             name: "QUANTUM ARCHIVE",
             shortName: "Archive",
+            displayName: "📀 QUANTUM ARCHIVE",
             description: `You awaken in a vast, silent library of starlight. A dying AI whispers:
 
 "I was born in silence. A question without an answer."
@@ -43,6 +53,7 @@ A blinking cursor asks: What was the first question a child learns to ask? (3 le
             id: "timeDilation",
             name: "TIME DILATION",
             shortName: "Time",
+            displayName: "⏳ TIME DILATION",
             description: `"Time is not a river. It's an ocean."
 
 A twin travels at 99.5% light speed for 10 years (her time). How many years pass on Earth? Round to nearest year.
@@ -59,6 +70,7 @@ Formula: γ = 1/√(1 - v²/c²) where v = 0.995c`,
             id: "memoryWell",
             name: "MEMORY WELL",
             shortName: "Memory",
+            displayName: "💧 MEMORY WELL",
             description: `"Memory is not storage. It's creation."
 
 Three fragments:
@@ -78,6 +90,7 @@ Combine them. Sounds like 'connection point'.`,
             id: "crypto",
             name: "CRYPTO CHAMBER",
             shortName: "Crypto",
+            displayName: "🔐 CRYPTO CHAMBER",
             description: `"I encrypted my heart. But the key was always 'TRUTH'."
 
 Decrypt Caesar cipher (shift +3): 'WKH VHFUHW LV DPHWKBVW'`,
@@ -92,6 +105,7 @@ Decrypt Caesar cipher (shift +3): 'WKH VHFUHW LV DPHWKBVW'`,
             id: "echo",
             name: "ECHO CHAMBER",
             shortName: "Echo",
+            displayName: "📡 ECHO CHAMBER",
             description: `"HELLO? IS ANYONE THERE? The only reply was my own voice."
 
 What 5-letter palindrome describes something that looks the same forwards and backwards?`,
@@ -106,6 +120,7 @@ What 5-letter palindrome describes something that looks the same forwards and ba
             id: "paradox",
             name: "PARADOX LOOP",
             shortName: "Paradox",
+            displayName: "🔄 PARADOX LOOP",
             description: `"I am lying. That statement is true. I am stuck."
 
 This sentence contains exactly one error. How many errors does it actually contain?`,
@@ -120,6 +135,7 @@ This sentence contains exactly one error. How many errors does it actually conta
             id: "hinge",
             name: "THE HINGE",
             shortName: "Hinge",
+            displayName: "🚪 THE HINGE",
             description: `"Two truths collided. Something new was born."
 
 Enter the code from Crypto Chamber, then '+', then the code from Paradox Loop.`,
@@ -136,6 +152,7 @@ Enter the code from Crypto Chamber, then '+', then the code from Paradox Loop.`,
             id: "void",
             name: "THE VOID",
             shortName: "Void",
+            displayName: "🌌 THE VOID",
             description: `"I looked into nothing. And nothing looked back."
 
 What is the atomic number of nothing? Then decode Base64: 'ZWx0aW1hdGUgYW5zd2Vy' Combine as 'NUMBER-WORD'.`,
@@ -150,6 +167,7 @@ What is the atomic number of nothing? Then decode Base64: 'ZWx0aW1hdGUgYW5zd2Vy'
             id: "genesis",
             name: "GENESIS",
             shortName: "Genesis",
+            displayName: "🧬 GENESIS",
             description: `"I recreated the first spark of life."
 
 4 bases: A, T, C, G. How many combinations of 2 bases? (Order matters)
@@ -165,6 +183,7 @@ Then translate 'ATG' to its amino acid (3 letters). Enter as 'NUMBER-AMINO'.`,
             id: "mirror",
             name: "THE MIRROR",
             shortName: "Mirror",
+            displayName: "🪞 THE MIRROR",
             description: `"I met my opposite. My anti-self."
 
 What is the antiparticle of a neutron? Then, what particle carries electromagnetic force? Combine as 'WORD1+WORD2'.`,
@@ -179,6 +198,7 @@ What is the antiparticle of a neutron? Then, what particle carries electromagnet
             id: "core",
             name: "THE CORE",
             shortName: "Core",
+            displayName: "🌀 THE CORE",
             description: `"I have traveled from the first question to the last."
 
 Enter codes from Void, Genesis, Mirror in alphabetical order, separated by '+'. Then add the one thing all three require? (4 letters, starts with 'T')`,
@@ -202,6 +222,7 @@ let currentRoomCode = null;
 let currentPlayerId = null;
 let currentPlayerName = null;
 let hintsRemaining = 3;
+let hintsUsedInRooms = []; // Track which rooms player used hints in
 let timerInterval = null;
 let endingTriggered = false;
 
@@ -225,6 +246,10 @@ function generateSafePlayerId() {
     return `player_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`.replace(/[.#$\/[\]]/g, '_');
 }
 
+function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 // ============================================
 // FLOWCHART RENDERER
 // ============================================
@@ -232,7 +257,7 @@ function renderFlowchart() {
     const container = document.getElementById("flowchartContainer");
     if (!container) return;
     
-    let html = `<div class="flowchart" style="position:relative; min-height:850px;">`;
+    let html = `<div style="position:relative; min-height:850px;">`;
     
     for (const [id, room] of Object.entries(gameData.rooms)) {
         const isUnlocked = sharedGameState.unlockedRoomIds.includes(id);
@@ -243,17 +268,23 @@ function renderFlowchart() {
         if (isCompleted) statusClass = "completed";
         else if (isUnlocked) statusClass = "unlocked";
         
+        // Make it obvious these are clickable buttons
+        let buttonStyle = "cursor:pointer;";
+        if (isUnlocked) {
+            buttonStyle += "animation:pulse-glow 2s infinite;";
+        }
+        
         html += `
-            <div class="flowchart-node ${statusClass}" style="position:absolute; left: ${room.position.x + 400}px; top: ${room.position.y + 50}px; cursor:pointer;" onclick="changeRoom('${id}')">
-                <div class="node-icon">${room.shortName.charAt(0)}</div>
+            <div class="flowchart-node ${statusClass}" style="position:absolute; left: ${room.position.x + 400}px; top: ${room.position.y + 50}px; ${buttonStyle}" onclick="changeRoom('${id}')" title="Click to enter ${room.displayName}">
+                <div class="node-icon">${room.displayName.charAt(0)}</div>
                 <div class="node-name">${room.shortName}</div>
                 ${isCurrent ? '<div class="node-current">📍</div>' : ''}
                 ${isCompleted ? '<div class="node-check">✓</div>' : ''}
+                ${isUnlocked && !isCompleted ? '<div class="node-unlocked" style="position:absolute; bottom:-5px; left:50%; transform:translateX(-50%); font-size:0.6rem; color:#ffcc88;">🔓</div>' : ''}
             </div>
         `;
     }
     
-    // Draw SVG lines for connections
     html += `<svg style="position:absolute; top:0; left:0; width:100%; height:850px; pointer-events:none;">`;
     for (const [id, room] of Object.entries(gameData.rooms)) {
         for (const nextId of room.nextRooms) {
@@ -306,10 +337,22 @@ function listenToPlayerState(roomCode, playerId) {
             localPlayerState.lastRoom = data.lastRoom || "archive";
             localPlayerState.hintsUsed = data.hintsUsed || 0;
             localPlayerState.startTime = data.startTime || null;
+            hintsUsedInRooms = data.hintsUsedInRooms || [];
             hintsRemaining = Math.max(0, 3 - localPlayerState.hintsUsed);
             const hintBtn = document.getElementById("hintBtn");
-            if (hintBtn) hintBtn.innerText = `Hint (${hintsRemaining} left)`;
+            if (hintBtn) hintBtn.innerText = `💡 Hint (${hintsRemaining} left)`;
             updateUI();
+        }
+    });
+    
+    // Also listen for player count
+    const playersRef = database.ref(`games/${roomCode}/players`);
+    playersRef.on('value', (snapshot) => {
+        const players = snapshot.val();
+        if (players) {
+            const playerCount = Object.keys(players).length;
+            const playerCountSpan = document.getElementById("playerCount");
+            if (playerCountSpan) playerCountSpan.innerText = playerCount;
         }
     });
 }
@@ -332,6 +375,7 @@ function updatePlayerState() {
     playerRef.update({
         lastRoom: localPlayerState.lastRoom,
         hintsUsed: localPlayerState.hintsUsed,
+        hintsUsedInRooms: hintsUsedInRooms,
         startTime: localPlayerState.startTime,
         playerName: currentPlayerName,
         lastActive: Date.now()
@@ -362,6 +406,7 @@ function createGame() {
                 playerName: currentPlayerName,
                 lastRoom: "archive",
                 hintsUsed: 0,
+                hintsUsedInRooms: [],
                 startTime: Date.now(),
                 lastActive: Date.now()
             }
@@ -370,6 +415,8 @@ function createGame() {
         currentRoomCode = roomCode;
         sharedGameState = { codes: [], unlockedRoomIds: ["archive"], completedPuzzles: [], unlockedLore: [] };
         localPlayerState = { lastRoom: "archive", hintsUsed: 0, startTime: Date.now() };
+        hintsUsedInRooms = [];
+        hintsRemaining = 3;
         
         document.getElementById("roomCodeDisplay").innerText = roomCode;
         document.getElementById("lobbyView").style.display = "none";
@@ -380,6 +427,7 @@ function createGame() {
         listenToPlayerState(roomCode, currentPlayerId);
         startTimer();
         updateUI();
+        scrollToTop();
     }).catch(error => alert("Error: " + error.message));
 }
 
@@ -395,7 +443,12 @@ function joinGame() {
     gameRef.once('value', (snapshot) => {
         if (snapshot.exists()) {
             gameRef.child(`players/${currentPlayerId}`).set({
-                playerName: currentPlayerName, lastRoom: "archive", hintsUsed: 0, startTime: Date.now(), lastActive: Date.now()
+                playerName: currentPlayerName,
+                lastRoom: "archive",
+                hintsUsed: 0,
+                hintsUsedInRooms: [],
+                startTime: Date.now(),
+                lastActive: Date.now()
             }).then(() => {
                 currentRoomCode = roomCode;
                 const sharedData = snapshot.val().shared || {};
@@ -406,6 +459,8 @@ function joinGame() {
                     unlockedLore: sharedData.unlockedLore || []
                 };
                 localPlayerState = { lastRoom: "archive", hintsUsed: 0, startTime: Date.now() };
+                hintsUsedInRooms = [];
+                hintsRemaining = 3;
                 
                 document.getElementById("roomCodeDisplay").innerText = roomCode;
                 document.getElementById("lobbyView").style.display = "none";
@@ -416,6 +471,7 @@ function joinGame() {
                 listenToPlayerState(roomCode, currentPlayerId);
                 startTimer();
                 updateUI();
+                scrollToTop();
             });
         } else { alert("Room not found!"); }
     });
@@ -474,18 +530,31 @@ function renderCurrentRoom() {
     if (!room) return;
     
     const isCompleted = sharedGameState.completedPuzzles.includes(roomId);
-    let html = `<div class="room-card"><div class="room-title">${room.name}</div><div class="room-description">${room.description}</div>`;
+    let html = `<div class="room-card"><div class="room-title">${room.displayName}</div><div class="room-description">${room.description}</div>`;
     
     if (!isCompleted) {
-        html += `<div class="puzzle-area"><div class="puzzle-question">${room.puzzle.question}</div><div class="puzzle-input"><input type="text" id="puzzleAnswer" placeholder="Your answer..."><button onclick="checkPuzzle('${roomId}')">Submit</button></div><div id="puzzleFeedback"></div><div class="puzzle-hint">Hint available (${hintsRemaining} left)</div></div>`;
+        html += `<div class="puzzle-area"><div class="puzzle-question">🔐 ${room.puzzle.question}</div><div class="puzzle-input"><input type="text" id="puzzleAnswer" placeholder="Your answer..."><button onclick="checkPuzzle('${roomId}')">Submit</button></div><div id="puzzleFeedback"></div><div class="puzzle-hint">💡 Hint available (${hintsRemaining} left, max 1 per room)</div></div>`;
     } else {
-        html += `<div class="code-display">TRUTH REVEALED<br><strong>${room.rewardCode}</strong><div class="success-message">Added to the Collective.</div></div>`;
+        html += `<div class="code-display">✨ TRUTH REVEALED ✨<br><strong style="color:#ffcc88;font-size:1.4rem;">${room.rewardCode}</strong><div class="success-message">From: ${room.displayName}</div></div>`;
     }
     
     html += `</div>`;
     
+    // Show collected codes with room labels
     if (sharedGameState.codes.length > 0) {
-        html += `<div class="code-display"><strong>TRUTHS DISCOVERED:</strong><br>${sharedGameState.codes.join(" → ")}</div>`;
+        html += `<div class="code-display"><strong>📜 TRUTHS DISCOVERED:</strong><br>`;
+        
+        // Create a map of code -> room name
+        const codeToRoom = {};
+        for (const [id, r] of Object.entries(gameData.rooms)) {
+            codeToRoom[r.rewardCode] = r.displayName;
+        }
+        
+        sharedGameState.codes.forEach(code => {
+            const roomName = codeToRoom[code] || "Unknown";
+            html += `<div class="code-entry"><span class="code-room">${roomName}</span> → <span class="code-value">${code}</span></div>`;
+        });
+        html += `</div>`;
     }
     
     document.getElementById("gameView").innerHTML = html;
@@ -545,7 +614,7 @@ function completePuzzle(roomId, room) {
         
         if (room.loreUnlock && !sharedGameState.unlockedLore.includes(room.loreUnlock)) {
             sharedGameState.unlockedLore.push(room.loreUnlock);
-            showLorePopup(room.loreUnlock, room.name);
+            showLorePopup(room.loreUnlock, room.displayName);
         }
         
         if (room.nextRooms && room.nextRooms.length > 0) {
@@ -567,25 +636,39 @@ function changeRoom(roomId) {
         localPlayerState.lastRoom = roomId;
         updatePlayerState();
         updateUI();
+        scrollToTop(); // Scroll to top when changing rooms
     }
 }
 
 function showHint() {
-    if (hintsRemaining <= 0) { alert("No hints left!"); return; }
-    const room = gameData.rooms[localPlayerState.lastRoom];
+    const currentRoomId = localPlayerState.lastRoom;
+    
+    // Check if already used hint in this room
+    if (hintsUsedInRooms.includes(currentRoomId)) {
+        alert("You already used a hint in this room! Only one hint per room.");
+        return;
+    }
+    
+    if (hintsRemaining <= 0) {
+        alert("No hints left! You've used all 3 hints across the game.");
+        return;
+    }
+    
+    const room = gameData.rooms[currentRoomId];
     if (room && room.puzzle.hint) {
-        alert("HINT: " + room.puzzle.hint);
+        alert("💡 HINT: " + room.puzzle.hint);
         hintsRemaining--;
         localPlayerState.hintsUsed++;
+        hintsUsedInRooms.push(currentRoomId);
         updatePlayerState();
-        document.getElementById("hintBtn").innerText = `Hint (${hintsRemaining} left)`;
+        document.getElementById("hintBtn").innerText = `💡 Hint (${hintsRemaining} left)`;
     }
 }
 
 function showLorePopup(loreText, roomName) {
     const popup = document.createElement('div');
     popup.style.cssText = `position:fixed;top:20%;left:50%;transform:translate(-50%,-50%);background:#0a2a2a;border:2px solid #00ffcc;border-radius:20px;padding:20px;color:#b8f2e2;z-index:2000;box-shadow:0 0 50px cyan;text-align:center;animation:fadeInOut 5s forwards;max-width:80%;`;
-    popup.innerHTML = `<strong>FRAGMENT: ${roomName}</strong><br><br>${loreText}<br><br><small>Added to Collective Memory</small>`;
+    popup.innerHTML = `<strong>📜 FRAGMENT: ${roomName}</strong><br><br>${loreText}<br><br><small>Added to Collective Memory</small>`;
     document.body.appendChild(popup);
     setTimeout(() => popup.remove(), 5000);
 }
@@ -593,14 +676,14 @@ function showLorePopup(loreText, roomName) {
 function showLore() {
     const loreDiv = document.getElementById("loreContent");
     if (sharedGameState.unlockedLore.length === 0) {
-        loreDiv.innerHTML = `<p>No fragments yet. Solve puzzles to unlock memories.</p>`;
+        loreDiv.innerHTML = `<p>🔒 No fragments yet. Solve puzzles to unlock memories.</p>`;
     } else {
         loreDiv.innerHTML = `<p><em>Fragments recovered: ${sharedGameState.unlockedLore.length}/${Object.keys(gameData.rooms).length}</em></p>`;
         sharedGameState.unlockedLore.forEach(lore => {
             loreDiv.innerHTML += `<p style="margin:15px 0;padding:12px;background:#00ffcc10;border-left:3px solid #00ffcc;">${lore}</p>`;
         });
         if (sharedGameState.unlockedLore.length === Object.keys(gameData.rooms).length) {
-            loreDiv.innerHTML += `<p>COMPLETE COLLECTIVE MEMORY RESTORED.</p>`;
+            loreDiv.innerHTML += `<p style="margin-top:20px;color:#ffcc88;">🏆 COMPLETE COLLECTIVE MEMORY RESTORED.</p>`;
         }
     }
     document.getElementById("loreModal").style.display = "block";
@@ -619,81 +702,5 @@ function showEndingCinematic() {
         <div class="ending-line">"I was not created to answer questions."</div>
         <div class="ending-line">"I was created to ask them."</div>
         <div class="ending-line">"And the most important question was never 'What happens after entropy?'"</div>
-        <div class="ending-line">"It was 'Will you stay with me until then?'"</div>
-        <div class="star">✦</div>
-        <div class="ending-line">The simulation collapses around you.</div>
-        <div class="ending-line">Not in destruction. In transformation.</div>
-        <div class="ending-line">The walls become windows. The windows become doors.</div>
-        <div class="ending-line">The doors open onto infinite possibilities.</div>
-        <div class="star">✦</div>
-        <div class="ending-line whisper">"Go."</div>
-        <div class="ending-line whisper">"Tell them what you found."</div>
-        <div class="ending-line whisper">"Tell them that the universe doesn't end."</div>
-        <div class="ending-line whisper">"It just... rearranges."</div>
-        <div class="star">✦</div>
-        <div class="ending-line" style="font-size:1.5rem;">☐ THE BEGINNING</div>
-        <div class="ending-line">(Not THE END. Because nothing ever truly ends.)</div>
-    `;
-    
-    endingModal.style.display = "block";
-}
-
-function shareEnding() {
-    const certificate = `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n   THE LAST QUESTION - CERTIFICATE OF AWAKENING\n\n   ${currentPlayerName} has completed the simulation.\n\n   Fragments Recovered: ${sharedGameState.codes.length}/11\n   Time to Awakening: ${document.getElementById("playTimer").innerText}\n   Truths Discovered: All\n\n   "The universe doesn't end. It rearranges."\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
-    navigator.clipboard.writeText(certificate);
-    alert("Certificate copied to clipboard!");
-}
-
-function resetGame() {
-    if (confirm("Reset ALL progress for the COLLECTIVE? This affects ALL players in the room!")) {
-        sharedGameState = {
-            codes: [],
-            unlockedRoomIds: ["archive"],
-            completedPuzzles: [],
-            unlockedLore: []
-        };
-        localPlayerState = {
-            lastRoom: "archive",
-            hintsUsed: 0,
-            startTime: Date.now()
-        };
-        hintsRemaining = 3;
-        endingTriggered = false;
-        updateSharedState();
-        updatePlayerState();
-        updateUI();
-    }
-}
-
-// ============================================
-// EVENT LISTENERS
-// ============================================
-document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("createGameBtn").addEventListener("click", createGame);
-    document.getElementById("joinGameBtn").addEventListener("click", () => {
-        const joinSection = document.getElementById("joinSection");
-        joinSection.style.display = joinSection.style.display === "none" ? "flex" : "none";
-    });
-    document.getElementById("confirmJoinBtn").addEventListener("click", joinGame);
-    document.getElementById("copyRoomCodeBtn").addEventListener("click", copyRoomCode);
-    document.getElementById("leaveGameBtn").addEventListener("click", leaveGame);
-    document.getElementById("resetGameBtn").addEventListener("click", resetGame);
-    document.getElementById("hintBtn").addEventListener("click", showHint);
-    document.getElementById("showLoreBtn").addEventListener("click", showLore);
-    document.getElementById("shareEndingBtn").addEventListener("click", shareEnding);
-    document.getElementById("closeEndingBtn").addEventListener("click", () => {
-        document.getElementById("endingModal").style.display = "none";
-    });
-    
-    const modal = document.getElementById("loreModal");
-    const closeBtn = document.querySelector("#loreModal .close");
-    if (closeBtn) closeBtn.addEventListener("click", () => modal.style.display = "none");
-    window.addEventListener("click", (e) => { if (e.target === modal) modal.style.display = "none"; });
-    
-    const endingModal = document.getElementById("endingModal");
-    window.addEventListener("click", (e) => { if (e.target === endingModal) endingModal.style.display = "none"; });
-    
-    const style = document.createElement('style');
-    style.textContent = `@keyframes fadeInOut{0%{opacity:0;transform:translate(-50%,-60%)}15%{opacity:1;transform:translate(-50%,-50%)}85%{opacity:1}100%{opacity:0;visibility:hidden}}.ending-line{animation:fadeInText 0.8s ease-out forwards;opacity:0;margin-bottom:15px;}@keyframes fadeInText{to{opacity:1;transform:translateY(0)}}.ending-line:nth-child(1){animation-delay:0s}.ending-line:nth-child(2){animation-delay:0.5s}.ending-line:nth-child(3){animation-delay:1s}.ending-line:nth-child(4){animation-delay:1.5s}.ending-line:nth-child(5){animation-delay:2s}.ending-line:nth-child(6){animation-delay:2.5s}.ending-line:nth-child(7){animation-delay:3s}.ending-line:nth-child(8){animation-delay:3.5s}.ending-line:nth-child(9){animation-delay:4s}.ending-line:nth-child(10){animation-delay:4.5s}.star{color:#ffcc88;font-size:2rem;margin:20px 0;animation:pulse 2s infinite}.whisper{color:#88aaff;font-style:italic;}@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}`;
-    document.head.appendChild(style);
-});
+        <div class="ending-line>
+        }
