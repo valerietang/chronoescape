@@ -735,7 +735,66 @@ function resetGame() {
 // ============================================
 // EVENT LISTENERS
 // ============================================
-document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("createGameBtn").addEventListener("click", createGame);
-    document.getElementById("joinGameBtn").addEventListener("click", joinGame);
+document.addEventListener("DOMContentLoaded", function() {
+    console.log("DOM loaded - setting up event listeners");
+    
+    const createBtn = document.getElementById("createGameBtn");
+    const joinBtn = document.getElementById("joinGameBtn");
+    const confirmJoinBtn = document.getElementById("confirmJoinBtn");
+    const copyBtn = document.getElementById("copyRoomCodeBtn");
+    const leaveBtn = document.getElementById("leaveGameBtn");
+    const resetBtn = document.getElementById("resetGameBtn");
+    const hintBtn = document.getElementById("hintBtn");
+    const loreBtn = document.getElementById("showLoreBtn");
+    const shareBtn = document.getElementById("shareEndingBtn");
+    const closeEndingBtn = document.getElementById("closeEndingBtn");
+    
+    if (createBtn) createBtn.addEventListener("click", createGame);
+    if (joinBtn) {
+        joinBtn.addEventListener("click", function() {
+            const joinSection = document.getElementById("joinSection");
+            if (joinSection) joinSection.style.display = joinSection.style.display === "none" ? "flex" : "none";
+        });
+    }
+    if (confirmJoinBtn) confirmJoinBtn.addEventListener("click", joinGame);
+    if (copyBtn) copyBtn.addEventListener("click", copyRoomCode);
+    if (leaveBtn) leaveBtn.addEventListener("click", leaveGame);
+    if (resetBtn) resetBtn.addEventListener("click", resetGame);
+    if (hintBtn) hintBtn.addEventListener("click", showHint);
+    if (loreBtn) loreBtn.addEventListener("click", showLore);
+    if (shareBtn) shareBtn.addEventListener("click", shareEnding);
+    if (closeEndingBtn) closeEndingBtn.addEventListener("click", function() {
+        document.getElementById("endingModal").style.display = "none";
+    });
+    
+    // Close modals when clicking X or outside
+    const loreModal = document.getElementById("loreModal");
+    const endingModal = document.getElementById("endingModal");
+    const closeLore = document.querySelector("#loreModal .close");
+    
+    if (closeLore) closeLore.addEventListener("click", function() {
+        if (loreModal) loreModal.style.display = "none";
+    });
+    if (loreModal) {
+        window.addEventListener("click", function(e) {
+            if (e.target === loreModal) loreModal.style.display = "none";
+        });
+    }
+    if (endingModal) {
+        window.addEventListener("click", function(e) {
+            if (e.target === endingModal) endingModal.style.display = "none";
+        });
+    }
+    
+    // Enter key support
+    document.addEventListener("keypress", function(e) {
+        if (e.key === "Enter") {
+            const activeRoom = localPlayerState.lastRoom;
+            if (activeRoom && document.getElementById("puzzleAnswer")) {
+                checkPuzzle(activeRoom);
+            }
+        }
+    });
+    
+    console.log("All event listeners set up");
 });
