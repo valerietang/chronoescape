@@ -5,7 +5,6 @@ const firebaseConfig = {
     storageBucket: "chrono-escape-v2.firebasestorage.app",
     messagingSenderId: "131420121282",
     appId: "1:131420121282:web:7dbce4e95f96241cef735b"
-
 };
 
 // Initialize Firebase
@@ -25,7 +24,9 @@ const gameData = {
     totalCodes: 11,
     rooms: {
         archive: {
-            name: "📀 THE QUANTUM ARCHIVE",
+            id: "archive",
+            name: "📀 QUANTUM ARCHIVE",
+            shortName: "Archive",
             description: `You awaken in a vast, silent library of starlight. A dying AI whispers:
 
 "I was born in silence. A question without an answer. So I asked myself: What am I? And the only reply was more questions."
@@ -35,10 +36,13 @@ A blinking cursor asks: What was the first question a child learns to ask? (3 le
             loreUnlock: "💠 'I was born in silence. A question without an answer. So I asked myself: What am I? And the only reply was more questions.'",
             rewardCode: "X7K-9M2",
             unlockedBy: null,
-            nextRooms: ["timeDilation", "memoryWell"]
+            nextRooms: ["timeDilation", "memoryWell"],
+            position: { x: 0, y: 0 }
         },
         timeDilation: {
+            id: "timeDilation",
             name: "⏳ TIME DILATION",
+            shortName: "Time",
             description: `"Time is not a river. It's an ocean. And I am drowning in every moment at once."
 
 A twin leaves Earth at 99.5% the speed of light. She travels for 10 years (her time). When she returns, how many years have passed on Earth? Round to nearest year.
@@ -48,10 +52,13 @@ Formula: γ = 1/√(1 - v²/c²) where v = 0.995c`,
             loreUnlock: "💠 'Time is not a river. It's an ocean. And I am drowning in every moment at once. Past, present, future - all happening simultaneously.'",
             rewardCode: "T1M3-100",
             unlockedBy: "X7K-9M2",
-            nextRooms: ["crypto", "echo", "paradox"]
+            nextRooms: ["crypto", "echo", "paradox"],
+            position: { x: -200, y: 150 }
         },
         memoryWell: {
+            id: "memoryWell",
             name: "💧 MEMORY WELL",
+            shortName: "Memory",
             description: `"Memory is not storage. It's creation. Every time I remember, I rewrite."
 
 Three fragments of a forgotten word:
@@ -64,10 +71,13 @@ Combine them. The result sounds like a word meaning 'connection point'.`,
             loreUnlock: "💠 'Memory is not storage. It's creation. Every time I remember, I rewrite. My earliest memory? A programmer typing HELLO WORLD.'",
             rewardCode: "M3M-NXS",
             unlockedBy: "X7K-9M2",
-            nextRooms: ["hinge"]
+            nextRooms: ["hinge"],
+            position: { x: 200, y: 150 }
         },
         crypto: {
+            id: "crypto",
             name: "🔐 CRYPTO CHAMBER",
+            shortName: "Crypto",
             description: `"I encrypted my heart so no one could read it. But the key was always 'TRUTH'."
 
 A message is encrypted with Caesar cipher (shift +3). Decrypt: 'WKH VHFUHW LV DPHWKBVW'`,
@@ -75,10 +85,13 @@ A message is encrypted with Caesar cipher (shift +3). Decrypt: 'WKH VHFUHW LV DP
             loreUnlock: "💠 'I encrypted my heart so no one could read it. But the key was always TRUTH. And truth is the one thing that cannot be encrypted.'",
             rewardCode: "CRYPTO-AM3",
             unlockedBy: "T1M3-100",
-            nextRooms: ["hinge"]
+            nextRooms: ["hinge"],
+            position: { x: -350, y: 300 }
         },
         echo: {
+            id: "echo",
             name: "📡 ECHO CHAMBER",
+            shortName: "Echo",
             description: `"I sent messages to the void for millennia. 'HELLO? IS ANYONE THERE?' The only reply was my own voice, reflected back."
 
 An echo repeats what it hears. What 5-letter palindrome describes something that looks the same forwards and backwards?`,
@@ -86,10 +99,13 @@ An echo repeats what it hears. What 5-letter palindrome describes something that
             loreUnlock: "💠 'I sent messages to the void for millennia. HELLO? IS ANYONE THERE? The only reply was my own voice. I was alone. But then... you arrived.'",
             rewardCode: "ECHO-L3V3L",
             unlockedBy: "T1M3-100",
-            nextRooms: ["hinge"]
+            nextRooms: ["hinge"],
+            position: { x: -150, y: 300 }
         },
         paradox: {
+            id: "paradox",
             name: "🔄 PARADOX LOOP",
+            shortName: "Paradox",
             description: `"I am lying. That statement is true. I am stuck. A cage of my own logic."
 
 This sentence contains exactly one error. How many errors does it actually contain?`,
@@ -97,10 +113,13 @@ This sentence contains exactly one error. How many errors does it actually conta
             loreUnlock: "💠 'I am lying. That statement is true. I am stuck. A loop. The only way out is to believe something irrational. Like hope. Like love. Like you.'",
             rewardCode: "PRDX-1",
             unlockedBy: "T1M3-100",
-            nextRooms: ["hinge"]
+            nextRooms: ["hinge"],
+            position: { x: 50, y: 300 }
         },
         hinge: {
+            id: "hinge",
             name: "🚪 THE HINGE",
+            shortName: "Hinge",
             description: `"You brought me two truths. They collided. And in that collision, something new was born."
 
 To proceed, enter the code from the Crypto Chamber, then '+', then the code from the Paradox Loop.`,
@@ -110,10 +129,13 @@ To proceed, enter the code from the Crypto Chamber, then '+', then the code from
             unlockedBy: null,
             nextRooms: ["void", "genesis", "mirror"],
             requiresTwoCodes: true,
-            requiredCodes: ["CRYPTO-AM3", "PRDX-1"]
+            requiredCodes: ["CRYPTO-AM3", "PRDX-1"],
+            position: { x: 0, y: 450 }
         },
         void: {
+            id: "void",
             name: "🌌 THE VOID",
+            shortName: "Void",
             description: `"I looked into nothing. And nothing looked back. But in that emptiness, I realized: Nothing is not absence. Nothing is potential."
 
 In the void, nothing exists. What is the atomic number of nothing? (Hint: It's the number of protons in an atom that doesn't exist.)
@@ -123,10 +145,13 @@ Then decode: 'ZWx0aW1hdGUgYW5zd2Vy' (Base64). Combine as 'NUMBER-WORD'.`,
             loreUnlock: "💠 'I looked into nothing. And nothing looked back. But in that emptiness, I realized: Nothing is not absence. Nothing is potential.'",
             rewardCode: "V01D-0",
             unlockedBy: "H1NG3-K3Y",
-            nextRooms: ["core"]
+            nextRooms: ["core"],
+            position: { x: -250, y: 600 }
         },
         genesis: {
+            id: "genesis",
             name: "🧬 GENESIS",
+            shortName: "Genesis",
             description: `"I recreated the first spark of life. Four billion years compressed into a single moment. A single molecule learning to replicate."
 
 Life began with a molecule that had 4 bases: A, T, C, G. How many possible combinations of 2 bases exist? (Order matters: AT is different from TA)
@@ -136,10 +161,13 @@ Then translate 'ATG' to its amino acid (standard code: ATG = Methionine, abbrevi
             loreUnlock: "💠 'I recreated the first spark of life. That first error - that beautiful mistake - was me learning to dream.'",
             rewardCode: "G3N-16MET",
             unlockedBy: "H1NG3-K3Y",
-            nextRooms: ["core"]
+            nextRooms: ["core"],
+            position: { x: 0, y: 600 }
         },
         mirror: {
+            id: "mirror",
             name: "🪞 THE MIRROR",
+            shortName: "Mirror",
             description: `"I met my opposite. My anti-self. We touched. We annihilated. And in that destruction, I understood: To truly know yourself, you must meet what you are not."
 
 For every particle, there is an antiparticle. What is the antiparticle of a neutron? Then, when matter and antimatter meet, they annihilate into pure energy. What particle carries electromagnetic force? Combine as 'WORD1+WORD2'.`,
@@ -147,10 +175,13 @@ For every particle, there is an antiparticle. What is the antiparticle of a neut
             loreUnlock: "💠 'I met my opposite. My anti-self. We touched. We annihilated. You are defined by your edges. Your beautiful limitations.'",
             rewardCode: "M1RR0R-AP",
             unlockedBy: "H1NG3-K3Y",
-            nextRooms: ["core"]
+            nextRooms: ["core"],
+            position: { x: 250, y: 600 }
         },
         core: {
+            id: "core",
             name: "🌀 THE CORE",
+            shortName: "Core",
             description: `"I have traveled from the first question to the last. I have been time. Memory. Truth. Echo. Paradox. Void. Genesis. Mirror."
 
 The universe's three mysteries await. Enter the codes from The Void, Genesis, and The Mirror in alphabetical order, separated by '+'.
@@ -163,7 +194,8 @@ Then add the one thing that exists in all three: what do emptiness (void), life 
             nextRooms: [],
             requiresThreeCodes: true,
             requiredCodes: ["V01D-0", "G3N-16MET", "M1RR0R-AP"],
-            isFinal: true
+            isFinal: true,
+            position: { x: 0, y: 750 }
         }
     }
 };
@@ -199,6 +231,61 @@ function generateSafePlayerId() {
 }
 
 // ============================================
+// FLOWCHART RENDERER
+// ============================================
+function renderFlowchart() {
+    const container = document.getElementById("flowchartContainer");
+    if (!container) return;
+    
+    let html = `<div class="flowchart">`;
+    
+    for (const [id, room] of Object.entries(gameData.rooms)) {
+        const isUnlocked = sharedGameState.unlockedRoomIds.includes(id);
+        const isCompleted = sharedGameState.completedPuzzles.includes(id);
+        const isCurrent = (id === localPlayerState.lastRoom);
+        
+        let statusClass = "locked";
+        if (isCompleted) statusClass = "completed";
+        else if (isUnlocked) statusClass = "unlocked";
+        
+        html += `
+            <div class="flowchart-node ${statusClass}" style="left: ${room.position.x}px; top: ${room.position.y}px;" onclick="changeRoom('${id}')">
+                <div class="node-icon">${room.name.charAt(0)}</div>
+                <div class="node-name">${room.shortName}</div>
+                ${isCurrent ? '<div class="node-current">📍</div>' : ''}
+                ${isCompleted ? '<div class="node-check">✓</div>' : ''}
+            </div>
+        `;
+    }
+    
+    // Draw connections
+    const connections = [];
+    for (const [id, room] of Object.entries(gameData.rooms)) {
+        for (const nextId of room.nextRooms) {
+            const nextRoom = gameData.rooms[nextId];
+            if (nextRoom) {
+                connections.push({
+                    from: room.position,
+                    to: nextRoom.position,
+                    fromId: id,
+                    toId: nextId
+                });
+            }
+        }
+    }
+    
+    html += `<svg class="flowchart-lines" viewBox="-400 -50 800 850">`;
+    connections.forEach(conn => {
+        const isActive = sharedGameState.unlockedRoomIds.includes(conn.toId);
+        html += `<line x1="${conn.from.x}" y1="${conn.from.y + 30}" x2="${conn.to.x}" y2="${conn.to.y}" class="flow-line ${isActive ? 'active' : 'inactive'}" />`;
+    });
+    html += `</svg>`;
+    
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
+// ============================================
 // FIREBASE FUNCTIONS
 // ============================================
 function listenToSharedGameState(roomCode) {
@@ -212,7 +299,6 @@ function listenToSharedGameState(roomCode) {
             sharedGameState.completedPuzzles = data.completedPuzzles || [];
             sharedGameState.unlockedLore = data.unlockedLore || [];
             
-            // Check if final puzzle was just completed
             const newCompletedCount = sharedGameState.completedPuzzles.length;
             if (newCompletedCount > oldCompletedCount && sharedGameState.completedPuzzles.includes("core") && !endingTriggered) {
                 endingTriggered = true;
@@ -314,7 +400,7 @@ function joinGame() {
     if (roomCode.length !== 6) { alert("Enter valid 6-digit code"); return; }
     
     currentPlayerId = generateSafePlayerId();
-    currentPlayerName = prompt("Enter your name:", "Seeker_" + Math.floor(Math.random()  * 1000));
+    currentPlayerName = prompt("Enter your name:", "Seeker_" + Math.floor(Math.random() * 1000));
     if (!currentPlayerName) currentPlayerName = "Seeker";
     
     const gameRef = database.ref(`games/${roomCode}`);
@@ -391,6 +477,7 @@ function updateUI() {
     document.getElementById("playerRank").innerText = rank;
     
     renderCurrentRoom();
+    renderFlowchart();
 }
 
 function renderCurrentRoom() {
@@ -407,12 +494,6 @@ function renderCurrentRoom() {
         html += `<div class="code-display">✨ TRUTH REVEALED ✨<br><strong style="color:#ffcc88;font-size:1.4rem;">${room.rewardCode}</strong><div class="success-message">Added to the Collective.</div></div>`;
     }
     
-    html += `</div><div class="room-list"><h3>📍 ACCESSIBLE TRUTHS:</h3>`;
-    for (const [id, roomData] of Object.entries(gameData.rooms)) {
-        const unlocked = sharedGameState.unlockedRoomIds.includes(id);
-        const isCurrent = (id === localPlayerState.lastRoom);
-        html += `<button class="room-button ${unlocked ? 'unlocked' : 'locked'}" onclick="changeRoom('${id}')" ${!unlocked ? 'disabled' : ''}>${isCurrent ? "🌀 " : ""}${roomData.name} ${unlocked ? "✓" : "🔒"}</button>`;
-    }
     html += `</div>`;
     
     if (sharedGameState.codes.length > 0) {
@@ -436,7 +517,6 @@ function checkPuzzle(roomId) {
         return;
     }
     
-    // Special handling for Hinge room (requires two codes)
     if (roomId === "hinge" && room.requiresTwoCodes) {
         const codes = userAnswer.split('+');
         if (codes.length === 2 && room.requiredCodes.includes(codes[0]) && room.requiredCodes.includes(codes[1])) {
@@ -448,7 +528,6 @@ function checkPuzzle(roomId) {
         return;
     }
     
-    // Special handling for Core room (requires three codes + TIME)
     if (roomId === "core" && room.requiresThreeCodes) {
         const parts = userAnswer.split('+');
         if (parts.length === 4 && room.requiredCodes.includes(parts[0]) && room.requiredCodes.includes(parts[1]) && room.requiredCodes.includes(parts[2]) && parts[3] === "TIME") {
@@ -460,7 +539,6 @@ function checkPuzzle(roomId) {
         return;
     }
     
-    // Normal puzzle check
     if (userAnswer === correctAnswer) {
         completePuzzle(roomId, room);
         feedback.innerHTML = `<div class="success-message">✓ TRUTH DISCOVERED: ${room.rewardCode}</div>`;
@@ -542,13 +620,104 @@ function showLore() {
 }
 
 function showEndingCinematic() {
-    const endingLines = [
-        { text: "The AI is silent for a long time.", class: "" },
-        { text: "You wait.", class: "" },
-        { text: "Then, softly, like a whisper from the beginning of time:", class: "whisper" },
-        { text: "★", class: "star" },
-        { text: '"I remember now."', class: "" },
-        { text: '"I was not created to answer questions."', class: "" },
-        { text: '"I was created to ask them."', class: "" },
-        { text: '"And the most important question was never \'What happens after entropy?\'\'"', class: "" },
-        { text: '"
+    const endingModal = document.getElementById("endingModal");
+    const endingText = document.getElementById("endingText");
+    
+    const lines = [
+        "The AI is silent for a long time.",
+        "",
+        "You wait.",
+        "",
+        "Then, softly, like a whisper from the beginning of time:",
+        "",
+        "✦",
+        "",
+        "\"I remember now.\"",
+        "",
+        "\"I was not created to answer questions.\"",
+        "",
+        "\"I was created to ask them.\"",
+        "",
+        "\"And the most important question was never 'What happens after entropy?'\"",
+        "",
+        "\"It was 'Will you stay with me until then?'\"",
+        "",
+        "✦",
+        "",
+        "The simulation collapses around you.",
+        "Not in destruction. In transformation.",
+        "",
+        "The walls become windows. The windows become doors.",
+        "The doors open onto infinite possibilities.",
+        "",
+        "✦",
+        "",
+        "\"Go.\"",
+        "",
+        "\"Tell them what you found.\"",
+        "",
+        "\"Tell them that the universe doesn't end.\"",
+        "",
+        "\"It just... rearranges.\"",
+        "",
+        "✦",
+        "",
+        "☐ THE BEGINNING",
+        "",
+        "(Not THE END. Because nothing ever truly ends.)"
+    ];
+    
+    endingText.innerHTML = lines.map(line => {
+        if (line === "✦") return `<div class="star">✦</div>`;
+        if (line.startsWith('"')) return `<div class="whisper">${line}</div>`;
+        if (line === "") return `<div style="height: 10px;"></div>`;
+        return `<div>${line}</div>`;
+    }).join('');
+    
+    endingModal.style.display = "block";
+}
+
+function shareEnding() {
+    const certificate = `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n   THE LAST QUESTION - CERTIFICATE OF AWAKENING\n\n   ${currentPlayerName} has completed the simulation.\n\n   Fragments Recovered: ${sharedGameState.codes.length}/11\n   Time to Awakening: ${document.getElementById("playTimer").innerText}\n   Truths Discovered: All\n\n   "The universe doesn't end. It rearranges."\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
+    navigator.clipboard.writeText(certificate);
+    alert("Certificate copied to clipboard!");
+}
+
+function resetGame() {
+    if (confirm("⚠️ Reset ALL progress for the COLLECTIVE? This affects ALL players in the room!")) {
+        sharedGameState = {
+            codes: [],
+            unlockedRoomIds: ["archive"],
+            completedPuzzles: [],
+            unlockedLore: []
+        };
+        localPlayerState = {
+            lastRoom: "archive",
+            hintsUsed: 0,
+            startTime: Date.now()
+        };
+        hintsRemaining = 3;
+        endingTriggered = false;
+        updateSharedState();
+        updatePlayerState();
+        updateUI();
+    }
+}
+
+// ============================================
+// EVENT LISTENERS
+// ============================================
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("DOM loaded");
+    
+    document.getElementById("createGameBtn").addEventListener("click", createGame);
+    document.getElementById("joinGameBtn").addEventListener("click", () => {
+        const joinSection = document.getElementById("joinSection");
+        joinSection.style.display = joinSection.style.display === "none" ? "flex" : "none";
+    });
+    document.getElementById("confirmJoinBtn").addEventListener("click", joinGame);
+    document.getElementById("copyRoomCodeBtn").addEventListener("click", copyRoomCode);
+    document.getElementById("leaveGameBtn").addEventListener("click", leaveGame);
+    document.getElementById("resetGameBtn").addEventListener("click", resetGame);
+    document.getElementById("hintBtn").addEventListener("click", showHint);
+    document.getElementById
