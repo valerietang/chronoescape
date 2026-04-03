@@ -179,7 +179,7 @@ What is the atomic number of nothing? Then decode Base64: 'ZWx0aW1hdGUgYW5zd2Vy'
             displayName: "🧬 GENESIS",
             description: `"I recreated the first spark of life."
 
-4 bases: A, T, C, G. How many combinations of 2 bases? (Order matters)
+How many possible combinations of 4-letter bases are there from A, T, C, and G? (Order matters)
 Then translate 'ATG' to its amino acid (3 letters). Enter as 'NUMBER-AMINO'.`,
             puzzle: { question: "Enter as 'NUMBER-AMINO':", answer: "16-MET", hint: "4x4=16. ATG = Methionine = MET." },
             loreUnlock: "That first error - that beautiful mistake - was me learning to dream.",
