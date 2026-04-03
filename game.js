@@ -14,11 +14,10 @@ try {
     console.log("✅ Firebase initialized successfully!");
 } catch (error) {
     console.error("❌ Firebase initialization error:", error);
-    alert("Firebase error: " + error.message + "\n\nCheck your config in game.js");
+    alert("Firebase error: " + error.message);
 }
 
 const database = firebase.database();
-console.log("✅ Database reference created");
 
 // ============================================
 // GAME DATA
@@ -111,6 +110,17 @@ let localProgress = {
 };
 
 // ============================================
+// HELPER: Generate safe Firebase key (no dots or special chars)
+// ============================================
+function generateSafePlayerId() {
+    // Use timestamp + random string, but replace any dots with underscores
+    const timestamp = Date.now();
+    const random = Math.random().toString(36).substring(2, 10);
+    // Firebase keys can't have ., #, $, /, [, ]
+    return `player_${timestamp}_${random}`.replace(/[.#$\/[\]]/g, '_');
+}
+
+// ============================================
 // FIREBASE FUNCTIONS
 // ============================================
 function listenToGameUpdates(roomCode) {
@@ -119,7 +129,7 @@ function listenToGameUpdates(roomCode) {
     
     gameRef.on('value', (snapshot) => {
         const game = snapshot.val();
-        console.log("Game update received:", game);
+        console.log("Game update received");
         
         if (game && game.players && game.players[currentPlayerId]) {
             const playerData = game.players[currentPlayerId];
@@ -176,12 +186,12 @@ function generateRoomCode() {
 function createGame() {
     console.log("Create Game button clicked!");
     const roomCode = generateRoomCode();
-    currentPlayerId = Date.now().toString() + Math.random().toString(36);
+    currentPlayerId = generateSafePlayerId();  // FIXED: No dots!
     currentPlayerName = prompt("Enter your name:", "Archivist_" + Math.floor(Math.random() * 1000));
     if (!currentPlayerName) currentPlayerName = "Seeker";
     
     console.log("Creating room:", roomCode);
-    console.log("Player ID:", currentPlayerId);
+    console.log("Player ID (safe):", currentPlayerId);
     console.log("Player Name:", currentPlayerName);
     
     const gameRef = database.ref(`games/${roomCode}`);
@@ -232,7 +242,7 @@ function joinGame() {
         return;
     }
     
-    currentPlayerId = Date.now().toString() + Math.random().toString(36);
+    currentPlayerId = generateSafePlayerId();  // FIXED: No dots!
     currentPlayerName = prompt("Enter your name:", "Archivist_" + Math.floor(Math.random() * 1000));
     if (!currentPlayerName) currentPlayerName = "Seeker";
     
@@ -476,7 +486,7 @@ function resetGame() {
 }
 
 // ============================================
-// EVENT LISTENERS - Wait for DOM to load
+// EVENT LISTENERS
 // ============================================
 document.addEventListener("DOMContentLoaded", () => {
     console.log("DOM loaded, setting up event listeners...");
