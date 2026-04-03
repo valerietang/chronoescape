@@ -3,35 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>The Chrono Cortex | Neural Escape Protocol</title>
+    <title> Chrono Escape </title>
     <link rel="stylesheet" href="style.css">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 </head>
 <body>
     <div class="game-container">
         <header>
-            <h1>⏰ THE CHRONO CORTEX <span style="font-size:0.8rem;">v2.0</span> 🧠</h1>
+            <h1>🌀 CHRONO ESCAPE <span style="font-size:0.8rem;">multiplayer</span></h1>
             <div class="player-info">
-                <span>🔑 Agent: <span id="playerName">Neural_Explorer</span></span>
-                <span>📦 Artifacts: <span id="codesFound">0</span>/<span id="totalCodes">7</span></span>
-                <span>🏆 Clearance: <span id="playerRank">Ω-0</span></span>
+                <span>👤 Player: <span id="playerName">Loading...</span></span>
+                <span>📦 Fragments: <span id="codesFound">0</span>/<span id="totalCodes">6</span></span>
+                <span>🏆 Rank: <span id="playerRank">Seeker</span></span>
                 <span>⏱️ Time: <span id="playTimer">00:00</span></span>
             </div>
             <div class="action-buttons">
                 <button id="resetGameBtn" class="reset-btn">🔄 Wipe Memory</button>
-                <button id="hintBtn" class="hint-btn">💡 Request Hint (3 left)</button>
+                <button id="hintBtn" class="hint-btn">💡 Hint (3 left)</button>
             </div>
         </header>
 
         <main>
-            <div id="gameView" class="game-view">
-                <!-- Dynamic content loads here -->
+            <!-- Multiplayer Panel -->
+            <div id="multiplayerPanel" class="multiplayer-panel">
+                <div id="lobbyView" class="lobby-view">
+                    <div class="lobby-buttons">
+                        <button id="createGameBtn" class="primary-btn">🎮 CREATE NEW GAME</button>
+                        <button id="joinGameBtn" class="secondary-btn">🔗 JOIN EXISTING GAME</button>
+                    </div>
+                    <div id="joinSection" style="display:none; margin-top:15px;">
+                        <input type="text" id="roomCodeInput" placeholder="Enter 6-digit code" maxlength="6" style="text-transform:uppercase">
+                        <button id="confirmJoinBtn">Join Room</button>
+                    </div>
+                </div>
+                
+                <div id="activeGameView" style="display:none;">
+                    <div class="room-header">
+                        <span>🏠 Room: <strong id="roomCodeDisplay">------</strong></span>
+                        <span>👥 Players: <span id="playerCount">1</span></span>
+                        <button id="copyRoomCodeBtn" class="small-btn">📋 Copy Code</button>
+                        <button id="leaveGameBtn" class="small-btn danger">🚪 Leave</button>
+                    </div>
+                    <div id="gameView" class="game-view">
+                        <!-- Game content loads here -->
+                    </div>
+                </div>
             </div>
         </main>
 
         <footer>
             <div class="footer-links">
-                <span>💠 Share neural codes with other agents</span>
-                <span>📜 <button id="showLoreBtn" class="lore-btn">View Lore Fragments</button></span>
+                <span>💠 Real-time multiplayer | Share your room code</span>
+                <span>📜 <button id="showLoreBtn" class="lore-btn">View Lore Archives</button></span>
             </div>
         </footer>
     </div>
