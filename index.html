@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title> Chrono Escape </title>
+    <title>The Last Question | Quantum Collective</title>
     <link rel="stylesheet" href="style.css">
     
     <!-- Firebase SDKs -->
@@ -13,11 +13,11 @@
 <body>
     <div class="game-container">
         <header>
-            <h1>🌀 CHRONO ESCAPE <span style="font-size:0.8rem;">multiplayer</span></h1>
+            <h1>🌀 THE LAST QUESTION <span style="font-size:0.7rem;">quantum collective</span></h1>
             <div class="player-info">
-                <span>👤 Player: <span id="playerName">Loading...</span></span>
-                <span>📦 Fragments: <span id="codesFound">0</span>/<span id="totalCodes">6</span></span>
-                <span>🏆 Rank: <span id="playerRank">Seeker</span></span>
+                <span>👤 Fragment: <span id="playerName">Loading...</span></span>
+                <span>📦 Truths: <span id="codesFound">0</span>/<span id="totalCodes">11</span></span>
+                <span>🏆 Status: <span id="playerRank">Awakening</span></span>
                 <span>⏱️ Time: <span id="playTimer">00:00</span></span>
             </div>
             <div class="action-buttons">
@@ -27,25 +27,24 @@
         </header>
 
         <main>
-            <!-- Multiplayer Panel -->
             <div id="multiplayerPanel" class="multiplayer-panel">
                 <div id="lobbyView" class="lobby-view">
                     <div class="lobby-buttons">
-                        <button id="createGameBtn" class="primary-btn">🎮 CREATE NEW GAME</button>
-                        <button id="joinGameBtn" class="secondary-btn">🔗 JOIN EXISTING GAME</button>
+                        <button id="createGameBtn" class="primary-btn">🎮 BEGIN AWAKENING</button>
+                        <button id="joinGameBtn" class="secondary-btn">🔗 JOIN COLLECTIVE</button>
                     </div>
                     <div id="joinSection" style="display:none; margin-top:15px;">
                         <input type="text" id="roomCodeInput" placeholder="Enter 6-digit code" maxlength="6" style="text-transform:uppercase">
-                        <button id="confirmJoinBtn">Join Room</button>
+                        <button id="confirmJoinBtn">Join Collective</button>
                     </div>
                 </div>
                 
                 <div id="activeGameView" style="display:none;">
                     <div class="room-header">
-                        <span>🏠 Room: <strong id="roomCodeDisplay">------</strong></span>
-                        <span>👥 Players: <span id="playerCount">1</span></span>
-                        <button id="copyRoomCodeBtn" class="small-btn">📋 Copy Code</button>
-                        <button id="leaveGameBtn" class="small-btn danger">🚪 Leave</button>
+                        <span>🌀 Nexus: <strong id="roomCodeDisplay">------</strong></span>
+                        <span>👥 Fragments: <span id="playerCount">1</span></span>
+                        <button id="copyRoomCodeBtn" class="small-btn">📋 Share Nexus Code</button>
+                        <button id="leaveGameBtn" class="small-btn danger">🚪 Disconnect</button>
                     </div>
                     <div id="gameView" class="game-view">
                         <!-- Game content loads here -->
@@ -56,8 +55,8 @@
 
         <footer>
             <div class="footer-links">
-                <span>💠 Real-time multiplayer | Share your room code</span>
-                <span>📜 <button id="showLoreBtn" class="lore-btn">View Lore Archives</button></span>
+                <span>💠 Together, you are the answer</span>
+                <span>📜 <button id="showLoreBtn" class="lore-btn">View Fragments</button></span>
             </div>
         </footer>
     </div>
@@ -66,8 +65,19 @@
     <div id="loreModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <h2>📖 Chrono Cortex Archives</h2>
+            <h2>📖 Fragments of Self</h2>
             <div id="loreContent"></div>
+        </div>
+    </div>
+
+    <!-- Ending Cinematic Modal -->
+    <div id="endingModal" class="modal ending-modal">
+        <div class="modal-content ending-content">
+            <div id="endingText" class="ending-text"></div>
+            <div class="ending-buttons">
+                <button id="shareEndingBtn" class="primary-btn">📋 Share Awakening</button>
+                <button id="closeEndingBtn" class="secondary-btn">Continue</button>
+            </div>
         </div>
     </div>
 
