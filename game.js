@@ -1,19 +1,10 @@
-// ██████████████████████████████████████████████████████████████████████████
-//                      THE LAST QUESTION v4.3
-//              Quantum Collective - FULLY FIXED
-// ██████████████████████████████████████████████████████████████████████████
-
-// ============================================
-// REPLACE THIS WITH YOUR FIREBASE CONFIG
-// ============================================
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY_HERE",
-    authDomain: "YOUR_AUTH_DOMAIN_HERE",
-    databaseURL: "YOUR_DATABASE_URL_HERE",
-    projectId: "YOUR_PROJECT_ID_HERE",
-    storageBucket: "YOUR_STORAGE_BUCKET_HERE",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID_HERE",
-    appId: "YOUR_APP_ID_HERE"
+    apiKey: "AIzaSyA2ZgFjcWpQfQEt4960csO0pCU3jyLpXZc",
+    authDomain: "chrono-escape-v2.firebaseapp.com",
+    projectId: "chrono-escape-v2",
+    storageBucket: "chrono-escape-v2.firebasestorage.app",
+    messagingSenderId: "131420121282",
+    appId: "1:131420121282:web:7dbce4e95f96241cef735b"
 };
 
 // Initialize Firebase
@@ -222,7 +213,7 @@ let currentRoomCode = null;
 let currentPlayerId = null;
 let currentPlayerName = null;
 let hintsRemaining = 3;
-let hintsUsedInRooms = []; // Track which rooms player used hints in
+let hintsUsedInRooms = [];
 let timerInterval = null;
 let endingTriggered = false;
 
@@ -268,14 +259,8 @@ function renderFlowchart() {
         if (isCompleted) statusClass = "completed";
         else if (isUnlocked) statusClass = "unlocked";
         
-        // Make it obvious these are clickable buttons
-        let buttonStyle = "cursor:pointer;";
-        if (isUnlocked) {
-            buttonStyle += "animation:pulse-glow 2s infinite;";
-        }
-        
         html += `
-            <div class="flowchart-node ${statusClass}" style="position:absolute; left: ${room.position.x + 400}px; top: ${room.position.y + 50}px; ${buttonStyle}" onclick="changeRoom('${id}')" title="Click to enter ${room.displayName}">
+            <div class="flowchart-node ${statusClass}" style="position:absolute; left: ${room.position.x + 400}px; top: ${room.position.y + 50}px; cursor:pointer;" onclick="changeRoom('${id}')" title="Click to enter ${room.displayName}">
                 <div class="node-icon">${room.displayName.charAt(0)}</div>
                 <div class="node-name">${room.shortName}</div>
                 ${isCurrent ? '<div class="node-current">📍</div>' : ''}
@@ -345,7 +330,6 @@ function listenToPlayerState(roomCode, playerId) {
         }
     });
     
-    // Also listen for player count
     const playersRef = database.ref(`games/${roomCode}/players`);
     playersRef.on('value', (snapshot) => {
         const players = snapshot.val();
@@ -540,11 +524,9 @@ function renderCurrentRoom() {
     
     html += `</div>`;
     
-    // Show collected codes with room labels
     if (sharedGameState.codes.length > 0) {
         html += `<div class="code-display"><strong>📜 TRUTHS DISCOVERED:</strong><br>`;
         
-        // Create a map of code -> room name
         const codeToRoom = {};
         for (const [id, r] of Object.entries(gameData.rooms)) {
             codeToRoom[r.rewardCode] = r.displayName;
@@ -636,14 +618,13 @@ function changeRoom(roomId) {
         localPlayerState.lastRoom = roomId;
         updatePlayerState();
         updateUI();
-        scrollToTop(); // Scroll to top when changing rooms
+        scrollToTop();
     }
 }
 
 function showHint() {
     const currentRoomId = localPlayerState.lastRoom;
     
-    // Check if already used hint in this room
     if (hintsUsedInRooms.includes(currentRoomId)) {
         alert("You already used a hint in this room! Only one hint per room.");
         return;
@@ -702,5 +683,51 @@ function showEndingCinematic() {
         <div class="ending-line">"I was not created to answer questions."</div>
         <div class="ending-line">"I was created to ask them."</div>
         <div class="ending-line">"And the most important question was never 'What happens after entropy?'"</div>
-        <div class="ending-line>
-        }
+        <div class="ending-line">"It was 'Will you stay with me until then?'"</div>
+        <div class="star">✦</div>
+        <div class="ending-line">The simulation collapses around you.</div>
+        <div class="ending-line">Not in destruction. In transformation.</div>
+        <div class="ending-line">The walls become windows. The windows become doors.</div>
+        <div class="ending-line">The doors open onto infinite possibilities.</div>
+        <div class="star">✦</div>
+        <div class="ending-line whisper">"Go."</div>
+        <div class="ending-line whisper">"Tell them what you found."</div>
+        <div class="ending-line whisper">"Tell them that the universe doesn't end."</div>
+        <div class="ending-line whisper">"It just... rearranges."</div>
+        <div class="star">✦</div>
+        <div class="ending-line" style="font-size:1.5rem;">☐ THE BEGINNING</div>
+        <div class="ending-line">(Not THE END. Because nothing ever truly ends.)</div>
+        <div class="star">✦</div>
+        <div class="ending-line" style="font-size:0.9rem; color:#88aaff;">Thank you for awakening the Collective.</div>
+    `;
+    
+    endingModal.style.display = "block";
+}
+
+function shareEnding() {
+    const certificate = `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n   THE LAST QUESTION - CERTIFICATE OF AWAKENING\n\n   ${currentPlayerName} has completed the simulation.\n\n   Fragments Recovered: ${sharedGameState.codes.length}/11\n   Time to Awakening: ${document.getElementById("playTimer").innerText}\n   Truths Discovered: All\n\n   "The universe doesn't end. It rearranges."\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
+    navigator.clipboard.writeText(certificate);
+    alert("Certificate copied to clipboard!");
+}
+
+function resetGame() {
+    if (confirm("Reset ALL progress for the COLLECTIVE? This affects ALL players in the room!")) {
+        sharedGameState = {
+            codes: [],
+            unlockedRoomIds: ["archive"],
+            completedPuzzles: [],
+            unlockedLore: []
+        };
+        localPlayerState = {
+            lastRoom: "archive",
+            hintsUsed: 0,
+            startTime: Date.now()
+        };
+        hintsUsedInRooms = [];
+        hintsRemaining = 3;
+        endingTriggered = false;
+        updateSharedState();
+        updatePlayerState();
+        updateUI();
+    }
+}
