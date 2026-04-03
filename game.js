@@ -57,21 +57,27 @@ Formula: γ = 1/√(1 - v²/c²) where v = 0.995c`,
             nextRooms: ["crypto", "echo", "paradox"],
             position: { x: -200, y: 150 }
         },
-        memoryWell: {
+            memoryWell: {
             id: "memoryWell",
             name: "MEMORY WELL",
             shortName: "Memory",
             displayName: "💧 MEMORY WELL",
-            description: `"Memory is not storage. It's creation."
+            description: `"Memory is not storage. It's reconstruction."
 
-Three fragments:
-1. First letter of 'NEURAL'
-2. Last letter of 'CORTEX'
-3. First letter of 'SYNAPSE'
+Three corrupted recall fragments surface from the well:
 
-Combine them. Sounds like 'connection point'.`,
-            puzzle: { question: "What 3-letter word? (uppercase)", answer: "NXS", hint: "N + X + S = NXS, sounds like 'nexus'." },
-            loreUnlock: "Memory is not storage. It's creation. Every time I remember, I rewrite.",
+1. CHILD → ? → ADULT
+2. PAST → ? → FUTURE
+3. SELF → ? → OTHER
+
+The missing word is the bridge all memory creates.
+(6 letters)`,
+            puzzle: {
+                question: "What 5-letter bridge word? (uppercase)",
+                answer: "NEXUS",
+                hint: "Memory links moments, identities, and time itself."
+            },
+            loreUnlock: "Memory is not storage. It's reconstruction. What connects us is what survives forgetting.",
             rewardCode: "M3M-NXS",
             unlockedBy: "X7K-9M2",
             nextRooms: ["hinge"],
