@@ -5,12 +5,12 @@
 
 const firebaseConfig = {
     
-    apiKey: "AIzaSyBLT_84k7cmLKWRRHJzDBW5ov01nw_mIrU",
-    authDomain: "chrono-escape-v1.firebaseapp.com",
-    projectId: "chrono-escape-v1",
-    storageBucket: "chrono-escape-v1.firebasestorage.app",
-    messagingSenderId: "1025858256106",
-    appId: "1:1025858256106:web:6ba46f5a46b52b1139eb93"
+  apiKey: "AIzaSyA2ZgFjcWpQfQEt4960csO0pCU3jyLpXZc",
+  authDomain: "chrono-escape-v2.firebaseapp.com",
+  projectId: "chrono-escape-v2",
+  storageBucket: "chrono-escape-v2.firebasestorage.app",
+  messagingSenderId: "131420121282",
+  appId: "1:131420121282:web:7dbce4e95f96241cef735b"
 };
 
 // Initialize Firebase
