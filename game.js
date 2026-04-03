@@ -71,7 +71,7 @@ Three corrupted recall fragments surface from the well:
 3. SELF → ? → OTHER
 
 The missing word is the bridge all memory creates.
-(6 letters)`,
+(5 letters)`,
             puzzle: {
                 question: "What 5-letter bridge word? (uppercase)",
                 answer: "NEXUS",
