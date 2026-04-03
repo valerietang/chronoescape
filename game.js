@@ -118,16 +118,28 @@ What 5-letter palindrome describes something that looks the same forwards and ba
             name: "PARADOX LOOP",
             shortName: "Paradox",
             displayName: "🔄 PARADOX LOOP",
-            description: `"I am lying. That statement is true. I am stuck."
+            description: `"I am lying. That statement is true. I am stuck in a cage of my own logic."
 
-This sentence contains exactly one error. How many errors does it actually contain?`,
-            puzzle: { question: "Enter the number:", answer: "1", hint: "The claim itself IS the error." },
+The terminal displays three statements:
+
+Statement A: "Exactly one of these statements is false."
+Statement B: "Exactly two of these statements are false."
+Statement C: "Exactly three of these statements are false."
+
+How many of these statements are actually TRUE?
+
+(Enter a number 0-3)`,
+        puzzle: {
+            question: "How many statements are TRUE? (number only)",
+            answer: "1",
+            hint: "If A is true, then exactly one statement is false (meaning two are true). But if two are true, B would also be true, creating a contradiction. Work through each possibility."
+    },
             loreUnlock: "I am stuck in a loop. The only way out is to believe something irrational. Like hope. Like you.",
             rewardCode: "PRDX-1",
             unlockedBy: "T1M3-100",
             nextRooms: ["hinge"],
             position: { x: 50, y: 300 }
-        },
+    },
         hinge: {
             id: "hinge",
             name: "THE HINGE",
