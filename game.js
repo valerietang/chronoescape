@@ -197,7 +197,7 @@ Then translate 'ATG' to its amino acid (3 letters). Enter as 'NUMBER-AMINO'.`,
             description: `"I met my opposite. My anti-self."
 
 What is the antiparticle of a neutron? Then, what particle carries electromagnetic force? Combine as 'WORD1+WORD2'.`,
-            puzzle: { question: "Enter as 'WORD1+WORD2' (uppercase):", answer: "ANTINEUTRON+PHOTON", hint: "Anti-neutron. Photon carries EM force." },
+            puzzle: { question: "Enter as 'WORD1+WORD2' (uppercase):", answer: "ANTINEUTRON+PHOTON", hint: "Do not add any spaces in between." },
             loreUnlock: "To truly know yourself, you must meet what you are not. You are defined by your beautiful limitations.",
             rewardCode: "M1RR0R-AP",
             unlockedBy: "H1NG3-K3Y",
@@ -212,7 +212,7 @@ What is the antiparticle of a neutron? Then, what particle carries electromagnet
             description: `"I have traveled from the first question to the last."
 
 Enter codes from Void, Genesis, Mirror in alphabetical order, separated by '+'. Then add the one thing all three require? (4 letters, starts with 'T')`,
-            puzzle: { question: "Enter all codes + the final word:", answer: "G3N-16MET+M1RR0R-AP+V01D-0+TIME", hint: "Alphabetical order, then add the 4-letter word that holds it all together." },
+            puzzle: { question: "Enter all codes + the final word:", answer: "G3N-16MET+M1RR0R-AP+V01D-0+TIME", hint: "The 4-letter word is something we experience every day." },
             loreUnlock: "What happens after entropy? YOU do.",
             rewardCode: "C0R3-4N5W3R",
             unlockedBy: null,
