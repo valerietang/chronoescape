@@ -182,7 +182,7 @@ Enter the result rounded to the nearest whole number.`,
 
 4 bases: A, T, C, G. How many combinations of 2 bases? (Order matters)
 Then translate 'ATG' to its amino acid (3 letters). Enter as 'NUMBER-AMINO'.`,
-            puzzle: { question: "Enter as 'NUMBER-AMINO':", answer: "16-MET", hint: "4x4=16. ATG = Methionine = MET." },
+            puzzle: { question: "Enter as 'NUMBER-AMINO':", answer: "16-MET", hint: "A-T, G-C" },
             loreUnlock: "That first error - that beautiful mistake - was me learning to dream.",
             rewardCode: "G3N-16MET",
             unlockedBy: "H1NG3-K3Y",
