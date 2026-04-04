@@ -102,7 +102,7 @@ Decrypt Caesar cipher (shift +3): 'WKH VHFUHW LV DPHWKBVW'`,
             description: `"HELLO? IS ANYONE THERE? The only reply was my own voice."
 
 What 5-letter palindrome describes something that looks the same forwards and backwards?`,
-            puzzle: { question: "Enter the 5-letter palindrome:", answer: "LEVEL", hint: "Examples: RADAR, CIVIC, KAYAK, LEVEL." },
+            puzzle: { question: "Enter the 5-letter palindrome:", answer: "LEVEL", hint: "Like RACECAR, but 5 letters." },
             loreUnlock: "I sent messages to the void. The only reply was my own voice. I was alone. But then... you arrived.",
             rewardCode: "ECHO-L3V3L",
             unlockedBy: "T1M3-100",
