@@ -165,10 +165,8 @@ If absolute zero is -273.15,
 and absolute nothing is 0,
 what is the temperature of "almost nothing"?
 
-The equation: (Absolute Nothing - Absolute Zero) ÷ 2
-
 Enter the result rounded to the nearest whole number.`,
-            puzzle: { question: "What is the temperature? (number only, round to nearest whole)", answer: "137", hint: "0 - (-273.15) = 273.15. Divide by 2 = 136.575. Rounded = 137." },
+            puzzle: { question: "What is the temperature? (number only)", answer: "1", hint: "0=false" },
             loreUnlock: "Nothing is not absence. Nothing is potential. Every universe began as nothing.",
             rewardCode: "V01D-0",
             unlockedBy: "H1NG3-K3Y",
