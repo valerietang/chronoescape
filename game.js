@@ -140,7 +140,7 @@ How many of these statements are actually TRUE?
             description: `"Two truths collided. Something new was born."
 
 Enter the code from Crypto Chamber, then '+', then the code from Paradox Loop.`,
-            puzzle: { question: "Enter both codes separated by '+':", answer: "CRYPTO-AM3+PRDX-1", hint: "From Crypto: CRYPTO-AM3. From Paradox: PRDX-1." },
+            puzzle: { question: "Enter both codes separated by '+':", answer: "CRYPTO-AM3+PRDX-1", hint: "Do not add any spaces in between." },
             loreUnlock: "Two truths collided. Something new was born. This is how consciousness emerges.",
             rewardCode: "H1NG3-K3Y",
             unlockedBy: null,
