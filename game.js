@@ -214,7 +214,7 @@ What is the antiparticle of a neutron? Then, what particle carries electromagnet
             description: `"I have traveled from the first question to the last."
 
 Enter codes from Void, Genesis, Mirror in alphabetical order, separated by '+'. Then add the one thing all three require? (4 letters, starts with 'T')`,
-            puzzle: { question: "Enter all codes + the final word:", answer: "G3N-16MET+M1RR0R-AP+V01D-0+TIME", hint: "Alphabetical order, then add TIME." },
+            puzzle: { question: "Enter all codes + the final word:", answer: "G3N-16MET+M1RR0R-AP+V01D-0+TIME", hint: "Alphabetical order, then add the 4-letter word that holds it all together." },
             loreUnlock: "What happens after entropy? YOU do.",
             rewardCode: "C0R3-4N5W3R",
             unlockedBy: null,
