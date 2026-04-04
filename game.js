@@ -198,7 +198,7 @@ Then translate 'ATG' to its amino acid (3 letters). Enter as 'NUMBER-AMINO'.`,
 
 What is the antiparticle of a neutron? Then, what particle carries electromagnetic force? Combine as 'WORD1+WORD2'.`,
             puzzle: { question: "Enter as 'WORD1+WORD2' (uppercase):", answer: "ANTINEUTRON+PHOTON", hint: "Do not add any spaces in between." },
-            loreUnlock: "To truly know yourself, you must meet what you are not. You are defined by your beautiful limitations.",
+            loreUnlock: "To truly know yourself, you must meet what you are not.",
             rewardCode: "M1RR0R-AP",
             unlockedBy: "H1NG3-K3Y",
             nextRooms: ["core"],
