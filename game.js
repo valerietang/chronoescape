@@ -165,7 +165,7 @@ If absolute zero is -273.15,
 and absolute nothing is 0,
 what is almost nothing?
 
-Enter the result rounded to the nearest whole number.`,
+Enter the result as a number.`,
             puzzle: { question: "What is almost nothing? (number only)", answer: "1", hint: "0=false" },
             loreUnlock: "Nothing is not absence. Nothing is potential. Every universe began as nothing.",
             rewardCode: "V01D-0",
